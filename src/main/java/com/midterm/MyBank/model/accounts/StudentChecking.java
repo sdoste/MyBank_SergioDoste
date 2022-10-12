@@ -1,0 +1,54 @@
+package com.midterm.MyBank.model.accounts;
+
+import com.midterm.MyBank.model.Users.AccountHolder;
+import com.midterm.MyBank.model.Utils.Money;
+import com.midterm.MyBank.model.Utils.Status;
+import com.midterm.MyBank.model.security.User;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import java.time.LocalDate;
+
+@Entity
+public class StudentChecking extends Account {
+    protected String secretKey;
+    protected LocalDate creationDate;
+    @Enumerated(EnumType.STRING)
+    protected Status status;
+    public StudentChecking() {
+    }
+    public StudentChecking(String secretKey, AccountHolder primaryOwner){
+        super(primaryOwner);
+        this.secretKey = secretKey;
+        this.creationDate = LocalDate.now();
+        this.status = Status.ACTIVE;
+    }
+    //setters and getters
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Override
+    public Status getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+}
