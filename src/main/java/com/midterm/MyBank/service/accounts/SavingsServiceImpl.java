@@ -1,9 +1,9 @@
-package com.midterm.MyBank.service.accounts.impl;
+package com.midterm.MyBank.service.accounts;
 
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Savings;
 import com.midterm.MyBank.repository.SavingsRepository;
-import com.midterm.MyBank.service.accounts.srv.SavingsService;
+import com.midterm.MyBank.service.accounts.interfaces.SavingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

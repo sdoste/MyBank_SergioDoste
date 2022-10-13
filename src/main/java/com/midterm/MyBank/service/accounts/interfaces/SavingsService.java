@@ -1,4 +1,4 @@
-package com.midterm.MyBank.service.accounts.srv;
+package com.midterm.MyBank.service.accounts.interfaces;
 
 import com.midterm.MyBank.model.accounts.Savings;
 

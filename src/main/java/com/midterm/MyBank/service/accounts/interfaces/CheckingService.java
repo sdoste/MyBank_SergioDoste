@@ -1,11 +1,11 @@
-package com.midterm.MyBank.service.accounts.srv;
+package com.midterm.MyBank.service.accounts.interfaces;
 
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
 import com.midterm.MyBank.model.accounts.Checking;
 
 public interface CheckingService {
-    Checking get(long id);
+    Checking get(String username, long id);
     Account save(Checking checkingAccount);
     Checking update(Checking checkingAccount, long id);
     Checking transfer(long userId, long recipientId, Money money);

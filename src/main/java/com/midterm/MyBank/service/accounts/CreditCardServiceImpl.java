@@ -1,9 +1,9 @@
-package com.midterm.MyBank.service.accounts.impl;
+package com.midterm.MyBank.service.accounts;
 
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.CreditCard;
 import com.midterm.MyBank.repository.CreditCardRepository;
-import com.midterm.MyBank.service.accounts.srv.CreditCardService;
+import com.midterm.MyBank.service.accounts.interfaces.CreditCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

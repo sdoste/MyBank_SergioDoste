@@ -1,4 +1,4 @@
-package com.midterm.MyBank.service.accounts.impl;
+package com.midterm.MyBank.service.accounts;
 
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Users.Admin;
@@ -7,17 +7,26 @@ import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
 import com.midterm.MyBank.model.accounts.Checking;
 import com.midterm.MyBank.model.accounts.StudentChecking;
+import com.midterm.MyBank.model.security.Role;
+import com.midterm.MyBank.model.security.User;
 import com.midterm.MyBank.repository.CheckingRepository;
 import com.midterm.MyBank.repository.CreditCardRepository;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
 import com.midterm.MyBank.repository.security.UserRepository;
-import com.midterm.MyBank.service.accounts.srv.CheckingService;
+import com.midterm.MyBank.service.accounts.interfaces.CheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.midterm.MyBank.service.utils.PasswordUtil.encryptPassword;
 
 @Service
 public class CheckingServiceImpl implements CheckingService {
@@ -32,8 +41,19 @@ public class CheckingServiceImpl implements CheckingService {
     UserRepository userRepository;
 
     @Override
-    public Checking get(long id) {
-        return checkingRepository.findById(id).get();
+    public Checking get(String username, long id) {
+        if (userRepository.findByUsername(username).isPresent()){
+            //user exists
+            User user = userRepository.findByUsername(username).get();
+            if (!(getAccount(id) == null)){
+                //account exists
+                return checkingRepository.findById(id).get();
+            } else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        }
     }
 
     @Override
@@ -126,15 +146,27 @@ public class CheckingServiceImpl implements CheckingService {
     public void AccountHolderAndAdminCreation(){
 //        String name = "pepe";
 //        LocalDate dateOfBirth = LocalDate.now();
-//        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
+        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
 //        AccountHolder userPepe = new AccountHolder(name, dateOfBirth, address);
 //        Admin adminSergio = new Admin("sergio");
 //        //usernames and passwords
 //        userPepe.setUsername("pepe");
-//        userPepe.setPassword("pepe123");
+//        userPepe.setPassword(encryptPassword("pepe123"));
 //
 //        adminSergio.setUsername("sergio");
-//        adminSergio.setPassword("sergio2022");
+//        adminSergio.setPassword(encryptPassword("sergio2022"));
+//
+//        Role admin = new Role();
+//        admin.setName("admin");
+//        Set<User> users = new HashSet<>();
+//        users.add(adminSergio);
+//        admin.setUsers(users);
+//
+//        Role accountholder = new Role();
+//        accountholder.setName("accountholder");
+//        Set<User> users2 = new HashSet<>();
+//        users2.add(userPepe);
+//        admin.setUsers(users2);
 //
 //        userRepository.save(userPepe);
 //        userRepository.save(adminSergio);
@@ -144,5 +176,10 @@ public class CheckingServiceImpl implements CheckingService {
 //
 //        Checking pepeChecking = new Checking("123", recoveredUserPepe);
 //        checkingRepository.save(pepeChecking);
+
+//        AccountHolder userMaria = new AccountHolder("Maria", LocalDate.now(), address);
+//        userMaria.setUsername("maria");
+//        userMaria.setPassword(encryptPassword("maria123"));
+//        userRepository.save(userMaria);
     }
 }

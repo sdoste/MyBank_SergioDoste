@@ -1,7 +1,7 @@
 package com.midterm.MyBank.controller;
 
 import com.midterm.MyBank.model.accounts.Savings;
-import com.midterm.MyBank.service.accounts.srv.SavingsService;
+import com.midterm.MyBank.service.accounts.interfaces.SavingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 @RestController
