@@ -1,4 +1,5 @@
 package com.midterm.MyBank.service.users;
 
-public interface UserService {
+
+public interface AccountHolderService {
 }

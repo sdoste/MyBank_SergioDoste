@@ -4,55 +4,74 @@ import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Savings;
 import com.midterm.MyBank.repository.SavingsRepository;
 import com.midterm.MyBank.service.accounts.interfaces.SavingsService;
+import com.midterm.MyBank.service.users.utils.AccountActions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Period;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class SavingsServiceImpl implements SavingsService {
     @Autowired
     SavingsRepository savingsRepository;
-
-
-    @Override
-    public Savings get(long id) {
-        return savingsRepository.findById(id).get();
-    }
+    //component with methods to transfer, find accounts (any type) and check if enough funds
+    @Autowired
+    AccountActions accountActions;
 
     @Override
-    public Savings save(Savings savings) {
-        return savingsRepository.save(savings);
-    }
-
-    @Override
-    public Savings update(Savings savings, long id) {
-        Savings recoveredObject = savingsRepository.findById(id).get();
-        recoveredObject.setBalance(savings.getBalance());
-        return savingsRepository.save(recoveredObject);
-    }
-    @Override
-    public void yearlyInterestApplied(Long id){
+    public Savings get(String username, long id) {
         if (savingsRepository.findById(id).isPresent()){
-            Savings recoveredSavingsAcc = savingsRepository.findById(id).get();
-            int YearsFromLastAccess = Period.between(recoveredSavingsAcc.getLastAppliedInterest(), LocalDate.now()).getYears();
-            //if more than 1 year has passed since last time account was access, add appropriate interest
-            if (YearsFromLastAccess > 1){
-                BigDecimal amountToBeIncreased = recoveredSavingsAcc.getInterestRate().multiply(BigDecimal.valueOf(YearsFromLastAccess));
-                Money IncreasedBalance = new Money(recoveredSavingsAcc.getBalance().increaseAmount(amountToBeIncreased));
-                recoveredSavingsAcc.setBalance(IncreasedBalance);
-            }
-            recoveredSavingsAcc.setLastAppliedInterest(LocalDate.now());
-        } else {
-            System.out.println("Id not valid");
+            //account exists
+            return savingsRepository.findById(id).get();
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no Savings Account with this id");
         }
     }
 
     @Override
-    public void delete(Savings savings) {
-        savingsRepository.delete(savings);
+    public Savings save(Savings savingsAccount) {
+        try {
+            return savingsRepository.save(savingsAccount);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while saving the Savings Account");
+        }
     }
 
+    @Override
+    public Savings update(Savings savingsAccount, long id) {
+        if (savingsRepository.findById(id).isPresent()){
+            //account exists
+            Savings recoveredAccount = savingsRepository.findById(id).get();
+            recoveredAccount.setBalance(savingsAccount.getBalance());
+            return savingsRepository.save(recoveredAccount);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saving account does not exist");
+        }
+    }
+
+    @Override
+    public Savings transfer(long userId, long recipientId, Money money){
+        //checking if issuing account exists
+        if (savingsRepository.findById(userId).isPresent()){
+            //checking if account is a Credit Card
+            if (accountActions.find(userId).getClass().getSimpleName() == "Savings"){
+                //accountActions checks if recipientId is valid, if enough funds in user account, and does the transfer
+                return (Savings) accountActions.transfer(userId, recipientId, money);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be from a savings account");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Savings Account Id is invalid");
+        }
+    }
+
+    @Override
+    public void delete(Savings savingsAccount) {
+        try {
+            savingsRepository.delete(savingsAccount);
+        }
+        catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting savings account");
+        }
+    }
 }

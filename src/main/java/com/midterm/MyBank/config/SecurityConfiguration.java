@@ -40,7 +40,7 @@ public class SecurityConfiguration {
         http.httpBasic();
         http.csrf().disable();
         http.authorizeRequests()
-                .mvcMatchers(HttpMethod.GET,  "/accounts/**").hasAnyRole("admin", "accountholder")
+                .mvcMatchers(HttpMethod.GET,  "/accounts/**").hasAnyRole("admin", "accountholder", "thirdparty")
                 .mvcMatchers(HttpMethod.POST, "/accounts/**").hasAnyRole("admin", "accountholder")
                 .mvcMatchers(HttpMethod.PUT, "/accounts/**").hasAnyRole("admin", "accountholder")
                 .mvcMatchers(HttpMethod.DELETE, "/accounts/**").hasRole("admin")

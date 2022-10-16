@@ -1,4 +1,4 @@
-package com.midterm.MyBank.controller;
+package com.midterm.MyBank.config.controller;
 
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
@@ -15,37 +15,33 @@ import org.springframework.web.server.ResponseStatusException;
 public class CheckingController {
 
     @Autowired
-    CheckingService checkingAccountService;
+    CheckingService checkingService;
 
     @PreAuthorize("#username == principal.username OR hasRole('admin')")
     @GetMapping("/accounts/{username}/checking/{id}")
     public Checking get(@PathVariable String username, @PathVariable long id){
-          try {
-            return checkingAccountService.get(username, id);
-        }
-            catch(Exception e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Access denied");
-            }
+        return checkingService.get(username, id);
     }
-
-    @PostMapping("/accounts/checking")
+    @PreAuthorize("hasRole('admin')")
+    @PostMapping("/accounts/{username}/checking")
     public Account create(@RequestBody Checking checkingAccount){
-        return checkingAccountService.save(checkingAccount);
+        return checkingService.save(checkingAccount);
     }
-    @PutMapping("/accounts/checking/{id}")
+    @PreAuthorize("hasRole('admin')")
+    @PutMapping("/accounts/{username}/checking/{id}")
     public Checking update(@PathVariable long id, @RequestBody Checking checkingAccount){
-        return checkingAccountService.update(checkingAccount, id);
+        return checkingService.update(checkingAccount, id);
     }
-
-    @PatchMapping("/accounts/checking/{id}/transfer")
+    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PatchMapping("/accounts/{username}checking/{id}/transfer")
     public Checking transfer(@PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
-        return checkingAccountService.transfer(id, recipientId, money);
+        return checkingService.transfer(id, recipientId, money);
     }
 
-
-    @DeleteMapping("/accounts/checking/{id}")
+    @PreAuthorize("hasRole('admin')")
+    @DeleteMapping("/accounts/{username}/checking/{id}")
     public void delete (@PathVariable long id, @RequestBody Checking checkingAccount){
-        checkingAccountService.delete(checkingAccount);
+        checkingService.delete(checkingAccount);
     }
 
 

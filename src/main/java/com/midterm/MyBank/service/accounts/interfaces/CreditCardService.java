@@ -1,11 +1,15 @@
 package com.midterm.MyBank.service.accounts.interfaces;
 
+import com.midterm.MyBank.model.Utils.Money;
+import com.midterm.MyBank.model.accounts.Account;
+import com.midterm.MyBank.model.accounts.Checking;
 import com.midterm.MyBank.model.accounts.CreditCard;
 
 public interface CreditCardService {
-    CreditCard get(long id);
-    CreditCard save(CreditCard creditCard);
-    CreditCard update(CreditCard creditCard, long id);
-    void monthlyInterestApplied(long id);
-    void delete(CreditCard creditCard);
+    CreditCard get(String username, long id);
+    CreditCard save(CreditCard creditCardAccount);
+    CreditCard update(CreditCard creditCardAccount, long id);
+    CreditCard transfer(long userId, long recipientId, Money money);
+
+    void delete(CreditCard creditCardAccount);
 }

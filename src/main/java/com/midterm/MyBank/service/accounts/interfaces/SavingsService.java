@@ -1,12 +1,14 @@
 package com.midterm.MyBank.service.accounts.interfaces;
 
+import com.midterm.MyBank.model.Utils.Money;
+import com.midterm.MyBank.model.accounts.CreditCard;
 import com.midterm.MyBank.model.accounts.Savings;
 
 public interface SavingsService {
-    Savings get(long id);
-    Savings save(Savings savings);
-    Savings update(Savings savings, long id);
+    Savings get(String username, long id);
+    Savings save(Savings savingsAccount);
+    Savings update(Savings savingsAccount, long id);
+    Savings transfer(long userId, long recipientId, Money money);
 
-    void yearlyInterestApplied(Long id);
-    void delete(Savings savings);
+    void delete(Savings savingsAccount);
 }

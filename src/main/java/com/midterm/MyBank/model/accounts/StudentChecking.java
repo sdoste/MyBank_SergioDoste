@@ -42,13 +42,14 @@ public class StudentChecking extends Account {
         this.creationDate = creationDate;
     }
 
-    @Override
     public Status getStatus() {
         return status;
     }
 
-    @Override
     public void setStatus(Status status) {
         this.status = status;
+    }
+    public void setBalance(Money balance){
+        this.balance = balance;
     }
 }

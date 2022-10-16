@@ -10,23 +10,23 @@ import com.midterm.MyBank.model.accounts.StudentChecking;
 import com.midterm.MyBank.model.security.Role;
 import com.midterm.MyBank.model.security.User;
 import com.midterm.MyBank.repository.CheckingRepository;
-import com.midterm.MyBank.repository.CreditCardRepository;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
 import com.midterm.MyBank.repository.security.UserRepository;
 import com.midterm.MyBank.service.accounts.interfaces.CheckingService;
+import com.midterm.MyBank.service.users.utils.AccountActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.midterm.MyBank.service.utils.PasswordUtil.encryptPassword;
+import static com.midterm.MyBank.service.users.utils.PasswordUtil.encryptPassword;
 
 @Service
 public class CheckingServiceImpl implements CheckingService {
@@ -34,119 +34,87 @@ public class CheckingServiceImpl implements CheckingService {
     CheckingRepository checkingRepository;
     @Autowired
     StudentCheckingRepository studentCheckingRepository;
+    //component with methods to transfer, find accounts (any type) and check if enough funds
     @Autowired
-    CreditCardRepository creditCardRepository;
-
+    AccountActions accountActions;
     @Autowired
     UserRepository userRepository;
 
     @Override
     public Checking get(String username, long id) {
-        if (userRepository.findByUsername(username).isPresent()){
-            //user exists
-            User user = userRepository.findByUsername(username).get();
-            if (!(getAccount(id) == null)){
-                //account exists
-                return checkingRepository.findById(id).get();
-            } else{
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
-            }
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        if (checkingRepository.findById(id).isPresent()){
+            //account exists
+         return checkingRepository.findById(id).get();
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no Checking Account with this id");
         }
     }
 
     @Override
     public Account save(Checking checkingAccount) {
-    //if age is greater than 24, create checking account
-//        if ((LocalDate.now().getYear() - checkingAccount.getPrimaryOwner().getDateOfBirth().getYear()) > 24){
-        if (Period.between(checkingAccount.getPrimaryOwner().getDateOfBirth(), LocalDate.now()).getYears() > 24){
-            return checkingRepository.save(checkingAccount);
-        } else {
-            //if age less than 24, we create and save a checking account
-            StudentChecking studentChecking = new StudentChecking();
-            studentChecking.setSecretKey(checkingAccount.getSecretKey());
-            studentChecking.setPrimaryOwner(checkingAccount.getPrimaryOwner());
-            if (checkingAccount.getSecondaryOwner() == null){
-                studentChecking.setSecondaryOwner(null);
-            }else {
-                studentChecking.setSecondaryOwner(checkingAccount.getSecondaryOwner());
-
+        try{
+            //if age is greater than 24, create checking account
+            if (Period.between(checkingAccount.getPrimaryOwner().getDateOfBirth(), LocalDate.now()).getYears() > 24){
+                return checkingRepository.save(checkingAccount);
+            } else {
+                //if age less than 24, we create and save a checking account
+                StudentChecking studentChecking = new StudentChecking();
+                studentChecking.setSecretKey(checkingAccount.getSecretKey());
+                studentChecking.setPrimaryOwner(checkingAccount.getPrimaryOwner());
+                if (!(checkingAccount.getSecondaryOwner() == null)){
+                    studentChecking.setSecondaryOwner(checkingAccount.getSecondaryOwner());
+                }
+                return studentCheckingRepository.save(studentChecking);
             }
-            return studentCheckingRepository.save(studentChecking);
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while saving the Checking account");
         }
     }
 
     @Override
     public Checking update(Checking checkingAccount, long id) {
-        Checking recoveredObject = checkingRepository.findById(id).get();
-        recoveredObject.setBalance(checkingAccount.getBalance());
-        return checkingRepository.save(recoveredObject);
-    }
-
-    @Override
-    public Account getAccount(long id){
         if (checkingRepository.findById(id).isPresent()){
-            return checkingRepository.findById(id).get();
-        } else if (studentCheckingRepository.findById(id).isPresent()) {
-            return studentCheckingRepository.findById(id).get();
-        } else if (creditCardRepository.findById(id).isPresent()){
-            return creditCardRepository.findById(id).get();
-
-        } else {
-            System.out.println("Account holder id is invalid");
-            return null;
-        }
-    }
-
-    @Override
-    public boolean enoughFunds(long userId, Money money){
-        Account recoveredAccount = checkingRepository.findById(userId).get();
-        if (recoveredAccount.getBalance().getAmount().compareTo(money.getAmount()) > 0){
-            return false;
+            //account exists
+            Checking recoveredAccount = checkingRepository.findById(id).get();
+            recoveredAccount.setBalance(checkingAccount.getBalance());
+            return checkingRepository.save(recoveredAccount);
         } else{
-            return true;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
         }
     }
+
+
     @Override
     public Checking transfer(long userId, long recipientId, Money money){
+        //checking if issuing account exists
         if (checkingRepository.findById(userId).isPresent()){
-            //User id VALID
-            Checking recoveredAccount = checkingRepository.findById(userId).get();
-            if (getAccount(recipientId) == null){
-                //Recipient Id INVALID
-                System.out.println("Wrong recipient Id");
-            } else{
-                //Recipient Id VALID
-                Account recipientAccount = getAccount(recipientId);
-                if (enoughFunds(userId, money)) {
-                    //ENOUGH FUNDS
-                    recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(money)));
-                    recipientAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(money)));
-                    return recoveredAccount;
-                }  else {
-                    //NOT ENOUGH FUNDS
-                    System.out.println("Insufficient funds in your account");
-                }
+            //checking if account is a Credit Card
+            if (accountActions.find(userId).getClass().getSimpleName() == "Checking"){
+                //accountActions checks if recipientId is valid, if enough funds in user account, and does the transfer
+                return (Checking) accountActions.transfer(userId, recipientId, money);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be from a checking account");
             }
-        }else {
-            //USER ID INVALID
-            System.out.println("User id is invalid");
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Checking Account Id is invalid");
         }
-        return null;
     }
-
 
     @Override
     public void delete(Checking checkingAccount) {
-        checkingRepository.delete(checkingAccount);
+        try {
+            checkingRepository.delete(checkingAccount);
+        }
+        catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting account");
+        }
     }
 
     @PostConstruct
     public void AccountHolderAndAdminCreation(){
 //        String name = "pepe";
 //        LocalDate dateOfBirth = LocalDate.now();
-        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
+//        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
 //        AccountHolder userPepe = new AccountHolder(name, dateOfBirth, address);
 //        Admin adminSergio = new Admin("sergio");
 //        //usernames and passwords
@@ -174,9 +142,9 @@ public class CheckingServiceImpl implements CheckingService {
 //        AccountHolder recoveredUserPepe = (AccountHolder) userRepository.findById(1L).get();
 //        Admin recoveredAdminSergio = (Admin) userRepository.findById(2L).get();
 //
-//        Checking pepeChecking = new Checking("123", recoveredUserPepe);
+//        Checking pepeChecking = new Checking("123", recoveredUserPepe, new Money(new BigDecimal("555")));
 //        checkingRepository.save(pepeChecking);
-
+//
 //        AccountHolder userMaria = new AccountHolder("Maria", LocalDate.now(), address);
 //        userMaria.setUsername("maria");
 //        userMaria.setPassword(encryptPassword("maria123"));

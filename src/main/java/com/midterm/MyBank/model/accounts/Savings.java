@@ -32,9 +32,8 @@ public class Savings extends Account{
     public Savings(String secretKey, AccountHolder PrimaryOwner, BigDecimal interestRate, BigDecimal minimumBalance) {
         super(PrimaryOwner);
         this.secretKey = secretKey;
-        this.minimumBalance = new Money(defaultMinBalance);
         this.creationDate = LocalDate.now();
-        this.status = Status.ACTIVE;
+        lastAppliedInterestDate = LocalDate.now();
         if (interestRate == null){
             // 0.0025
             this.interestRate = defaultRate;
@@ -48,7 +47,8 @@ public class Savings extends Account{
         } else {
             setMinimumBalance(minimumBalance);
         }
-        lastAppliedInterestDate = LocalDate.now();
+        setBalance(balance);
+        this.status = Status.ACTIVE;
     }
 //getters and setters
 

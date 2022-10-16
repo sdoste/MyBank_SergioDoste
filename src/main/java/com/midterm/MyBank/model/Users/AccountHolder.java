@@ -16,10 +16,6 @@ import java.util.Set;
 @Entity
 public class AccountHolder extends User {
 
-
-    @Id
-    @GeneratedValue
-    private long id;
     private String name;
     private LocalDate dateOfBirth;
     @Embedded
@@ -37,13 +33,15 @@ public class AccountHolder extends User {
        public AccountHolder() {
     }
 
-    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress){
+    public AccountHolder(String username, String password, String name, LocalDate dateOfBirth, Address primaryAddress){
+        super(username, password);
         this.name = name;
         setDateOfBirth(dateOfBirth);
         this.primaryAddress = primaryAddress;
     }
     //constructor with mailingAddress
-    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress){
+    public AccountHolder(String username, String password, String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress){
+        super(username, password);
         this.name = name;
         setDateOfBirth(dateOfBirth);
         this.primaryAddress = primaryAddress;
@@ -55,9 +53,6 @@ public class AccountHolder extends User {
     }
     //getters and setters
 
-    public long getId() {
-        return id;
-    }
     public String getName() {
         return name;
     }

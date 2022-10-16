@@ -36,18 +36,15 @@ public class Account {
     //constructor with & primaryOwner
     protected Account(AccountHolder primaryOwner) {
         this.PrimaryOwner = primaryOwner;
-        //New accounts will have 0 balance
+        //Initializing balance (will be set in each account constructor later)
         this.balance = new Money(new BigDecimal("0.00"));
     }
     //constructor with primaryOwner & secondary owner
     protected Account(AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.PrimaryOwner = primaryOwner;
         this.SecondaryOwner = secondaryOwner;
-        //New accounts will have 0 balance
+        //Initializing balance (will be set in each account constructor later)
         this.balance = new Money(new BigDecimal("0.00"));
-    }
-    public void setBalanceAmount(BigDecimal balance) {
-        this.balance = new Money(balance);
     }
 
     public long getId() {
@@ -57,15 +54,6 @@ public class Account {
     public void setId(long id) {
         this.id = id;
     }
-
-    public Money getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Money balance) {
-        this.balance = balance;
-    }
-
 
     public AccountHolder getPrimaryOwner() {
         return PrimaryOwner;
@@ -91,6 +79,13 @@ public class Account {
         this.penaltyFee = penaltyFee;
     }
 
+    public Money getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Money balance) {
+        this.balance = balance;
+    }
 
     public Status getStatus() {
         return status;

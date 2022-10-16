@@ -30,19 +30,21 @@ public class Checking extends Account {
     public Checking() {
     }
 
-    public Checking(String secretKey, AccountHolder primaryOwner) {
+    public Checking(String secretKey, AccountHolder primaryOwner, Money balance) {
         super(primaryOwner);
         this.secretKey = secretKey;
-        this.minimumBalance = new Money(defaultMinBalance);
         this.monthlyMaintenanceFee = defaultMonthlyMaintenanceFee;
-        this.status = Status.ACTIVE;
         this.creationDate = LocalDate.now();
+        this.minimumBalance = new Money(defaultMinBalance);
+        setBalance(balance);
+        this.status = Status.ACTIVE;
     }
 
     public Money getBalance() {
         return this.balance;
     }
     //setters & getters
+    @Override
     public void setBalance(Money balance) {
         BigDecimal amount = balance.getAmount();
         if (amount.compareTo(minimumBalance.getAmount()) >= 0) {
