@@ -128,64 +128,64 @@ public class CheckingServiceImpl implements CheckingService {
     @PostConstruct
     public void UsersAndAccountCreationForTesting(){
         //CREATING USERS
-        LocalDate dateOfBirth = LocalDate.now();
-        LocalDate date1992 = LocalDate.of(1992, 1, 8);
-        LocalDate date2000 = LocalDate.of(2000, 12, 4);
-
-        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
-        AccountHolder userJose = new AccountHolder("jose", encryptPassword("jose123"), "Jose garcía", date1992, address);
-        AccountHolder userPepita = new AccountHolder("pepita", encryptPassword("pepita123"), "Pepa sánchez", date2000, address);
-        Admin adminSergio = new Admin("sergio", encryptPassword("sergio2022"), "sergio doste");
-        ThirdParty movistar = new ThirdParty("movistar", encryptPassword("movistar2022"), "movistar", encryptPassword("123"));
-
-        //ASSIGNING ROLES
-        Role admin = new Role("ADMIN");
-        Set<User> users = new HashSet<>();
-        users.add(adminSergio);
-        admin.setUsers(users);
-        Set<Role> roles1 = new HashSet<>();
-        roles1.add(admin);
-        adminSergio.setRoles(roles1);
-
-        Role accountholder = new Role("ACCOUNTHOLDER");
-        Set<User> users2 = new HashSet<>();
-        users2.add(userJose);
-        users2.add(userPepita);
-        accountholder.setUsers(users2);
-        Set<Role> roles2 = new HashSet<>();
-        roles2.add(accountholder);
-        userJose.setRoles(roles2);
-        userPepita.setRoles(roles2);
-
-        Role thirdparty = new Role("THIRDPARTY");
-        Set<User> users3 = new HashSet<>();
-        users3.add(movistar);
-        thirdparty.setUsers(users3);
-        Set<Role> roles3 = new HashSet<>();
-        roles3.add(thirdparty);
-        movistar.setRoles(roles3);
-        //SAVING THEM
-        roleRepository.save(admin);
-        roleRepository.save(accountholder);
-        roleRepository.save(thirdparty);
-        userRepository.save(userJose);
-        userRepository.save(userPepita);
-        userRepository.save(adminSergio);
-        userRepository.save(movistar);
-
-        //ACCOUNT CREATION
-
-        //CHECKING
-
-        //SAVINGS
-
-        //CREDIT CARD
-        AccountHolder recoveredUserJose = (AccountHolder) userRepository.findById(userJose.getId()).get();
-//        Admin recoveredAdminSergio = (Admin) userRepository.findById(2L).get();
-
-        Checking pepeCheckingAccount = new Checking("123", recoveredUserJose, new Money(new BigDecimal("1111")));
-        Checking MariaCheckingAccount = new Checking("123", userPepita, new Money(new BigDecimal("2222")));
-        checkingRepository.save(pepeCheckingAccount);
-        checkingRepository.save(MariaCheckingAccount);
+//        LocalDate dateOfBirth = LocalDate.now();
+//        LocalDate date1992 = LocalDate.of(1992, 1, 8);
+//        LocalDate date2000 = LocalDate.of(2000, 12, 4);
+//
+//        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
+//        AccountHolder userJose = new AccountHolder("jose", encryptPassword("jose123"), "Jose garcía", date1992, address);
+//        AccountHolder userPepita = new AccountHolder("pepita", encryptPassword("pepita123"), "Pepa sánchez", date2000, address);
+//        Admin adminSergio = new Admin("sergio", encryptPassword("sergio2022"), "sergio doste");
+//        ThirdParty movistar = new ThirdParty("movistar", encryptPassword("movistar2022"), "movistar", encryptPassword("123"));
+//
+//        //ASSIGNING ROLES
+//        Role admin = new Role("ADMIN");
+//        Set<User> users = new HashSet<>();
+//        users.add(adminSergio);
+//        admin.setUsers(users);
+//        Set<Role> roles1 = new HashSet<>();
+//        roles1.add(admin);
+//        adminSergio.setRoles(roles1);
+//
+//        Role accountholder = new Role("ACCOUNTHOLDER");
+//        Set<User> users2 = new HashSet<>();
+//        users2.add(userJose);
+//        users2.add(userPepita);
+//        accountholder.setUsers(users2);
+//        Set<Role> roles2 = new HashSet<>();
+//        roles2.add(accountholder);
+//        userJose.setRoles(roles2);
+//        userPepita.setRoles(roles2);
+//
+//        Role thirdparty = new Role("THIRDPARTY");
+//        Set<User> users3 = new HashSet<>();
+//        users3.add(movistar);
+//        thirdparty.setUsers(users3);
+//        Set<Role> roles3 = new HashSet<>();
+//        roles3.add(thirdparty);
+//        movistar.setRoles(roles3);
+//        //SAVING THEM
+//        roleRepository.save(admin);
+//        roleRepository.save(accountholder);
+//        roleRepository.save(thirdparty);
+//        userRepository.save(userJose);
+//        userRepository.save(userPepita);
+//        userRepository.save(adminSergio);
+//        userRepository.save(movistar);
+//
+//        //ACCOUNT CREATION
+//
+//        //CHECKING
+//
+//        //SAVINGS
+//
+//        //CREDIT CARD
+//        AccountHolder recoveredUserJose = (AccountHolder) userRepository.findById(userJose.getId()).get();
+////        Admin recoveredAdminSergio = (Admin) userRepository.findById(2L).get();
+//
+//        Checking pepeCheckingAccount = new Checking("123", recoveredUserJose, new Money(new BigDecimal("1111")));
+//        Checking MariaCheckingAccount = new Checking("123", userPepita, new Money(new BigDecimal("2222")));
+//        checkingRepository.save(pepeCheckingAccount);
+//        checkingRepository.save(MariaCheckingAccount);
     }
 }

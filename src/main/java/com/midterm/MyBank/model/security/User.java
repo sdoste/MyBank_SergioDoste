@@ -11,7 +11,7 @@ public abstract class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     protected long id;
-
+    @Column(unique = true)
     private String username;
     private String password;
 //    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
