@@ -3,7 +3,6 @@ package com.midterm.MyBank.model.accounts;
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.Utils.Status;
-import com.midterm.MyBank.model.security.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +14,7 @@ public class Savings extends Account{
     protected LocalDate creationDate;
     @Enumerated(EnumType.STRING)
     protected Status status;
+    @Column(name = "interest_rate", precision = 19, scale = 4)
     private BigDecimal interestRate;
     @Embedded
     @AttributeOverrides({
@@ -24,12 +24,14 @@ public class Savings extends Account{
     private Money minimumBalance;
     protected LocalDate lastAppliedInterestDate;
     private final BigDecimal defaultRate = new BigDecimal("0.0025");
+
+    //Saved as BigDecimal for easier comparison in setter and to not clash in db with other Money objects
     private final BigDecimal defaultMinBalance = new BigDecimal("1000");
 
     //constructors
     public Savings() {
     }
-    public Savings(String secretKey, AccountHolder PrimaryOwner, BigDecimal interestRate, BigDecimal minimumBalance) {
+    public Savings(String secretKey, AccountHolder PrimaryOwner, BigDecimal interestRate, BigDecimal minimumBalance, Money balance) {
         super(PrimaryOwner);
         this.secretKey = secretKey;
         this.creationDate = LocalDate.now();
@@ -38,12 +40,11 @@ public class Savings extends Account{
             // 0.0025
             this.interestRate = defaultRate;
         } else {
-            // 0.0025
             setInterestRate(interestRate);
         }
         if (minimumBalance == null){
             // 1000
-            this.minimumBalance = new Money(defaultMinBalance);
+            this.minimumBalance = new Money (defaultMinBalance);
         } else {
             setMinimumBalance(minimumBalance);
         }
@@ -103,7 +104,7 @@ public class Savings extends Account{
             this.balance = balance;
             //if balance drops below minimum balance, penaltyFee is applied
         } else {
-            this.balance = new Money(this.balance.decreaseAmount(penaltyFee));
+            this.balance = new Money(balance.decreaseAmount(penaltyFee));
         }
     }
 

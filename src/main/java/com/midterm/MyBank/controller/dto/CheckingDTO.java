@@ -2,7 +2,6 @@ package com.midterm.MyBank.controller.dto;
 import com.midterm.MyBank.model.Utils.Money;
 
 
-
 public class CheckingDTO {
 //    @NotEmpty(message = "Employee can't be empty or null.")
     private Long primaryOwnerId;

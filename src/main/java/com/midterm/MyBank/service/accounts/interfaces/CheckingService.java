@@ -7,9 +7,11 @@ import com.midterm.MyBank.model.accounts.Checking;
 
 public interface CheckingService {
     Checking get(String username, long id);
-    CheckingDTO test(String hello);
     //we pass a checkingAccount but it converts it to student if age < 24
     Account save(CheckingDTO checkingAccountDTO);
+    Checking modifyBalance(Money newBalance, long id);
+    Checking increaseBalance(Money subtractedBalance, long id);
+    Checking decreaseBalance(Money subtractedBalance, long id);
     Checking update(Checking checkingAccount, long id);
     Checking transfer(long userId, long recipientId, Money money);
     void delete(Checking checkingAccount);

@@ -1,17 +1,10 @@
 package com.midterm.MyBank.model.Users;
 
 import com.midterm.MyBank.model.Utils.Address;
-import com.midterm.MyBank.model.accounts.Account;
 import com.midterm.MyBank.model.security.User;
-import com.midterm.MyBank.repository.security.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
 
 @Entity
 public class AccountHolder extends User {

@@ -5,7 +5,7 @@ import com.midterm.MyBank.model.accounts.StudentChecking;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
 import com.midterm.MyBank.repository.security.UserRepository;
 import com.midterm.MyBank.service.accounts.interfaces.StudentCheckingService;
-import com.midterm.MyBank.service.users.utils.AccountActions;
+import com.midterm.MyBank.service.utils.AccountActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,14 +24,41 @@ public class StudentCheckingServiceImpl implements StudentCheckingService {
 
     @Override
     public StudentChecking get(String username, long id) {
+        return studentCheckingRepository.findById(id).get();
+    }
+    @Override
+    public StudentChecking modifyBalance(Money newBalance, long id){
         if (studentCheckingRepository.findById(id).isPresent()){
             //account exists
-            return studentCheckingRepository.findById(id).get();
+            StudentChecking recoveredAccount = studentCheckingRepository.findById(id).get();
+            recoveredAccount.setBalance(newBalance);
+            return studentCheckingRepository.save(recoveredAccount);
         } else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no Student Checking Account with this id");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
         }
     }
-
+    @Override
+    public StudentChecking increaseBalance(Money addedBalance, long id){
+        if (studentCheckingRepository.findById(id).isPresent()){
+            //account exists
+            StudentChecking recoveredAccount = studentCheckingRepository.findById(id).get();
+            recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(addedBalance)));
+            return studentCheckingRepository.save(recoveredAccount);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
+        }
+    }
+    @Override
+    public StudentChecking decreaseBalance(Money subtractedBalance, long id){
+        if (studentCheckingRepository.findById(id).isPresent()){
+            //account exists
+            StudentChecking recoveredAccount = studentCheckingRepository.findById(id).get();
+            recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(subtractedBalance)));
+            return studentCheckingRepository.save(recoveredAccount);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
+        }
+    }
     @Override
     public StudentChecking update(StudentChecking studentCheckingAccount, long id) {
         if (studentCheckingRepository.findById(id).isPresent()){
@@ -47,17 +74,12 @@ public class StudentCheckingServiceImpl implements StudentCheckingService {
 
     @Override
     public StudentChecking transfer(long userId, long recipientId, Money money){
-        //checking if issuing account exists
-        if (studentCheckingRepository.findById(userId).isPresent()){
-            //checking if account is a Credit Card
-            if (accountActions.find(userId).getClass().getSimpleName() == "StudentChecking"){
-                //accountActions checks if recipientId is valid, if enough funds in user account, and does the transfer
-                return (StudentChecking) accountActions.transfer(userId, recipientId, money);
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be from a student checking account");
-            }
+        //checking if account is a Credit Card
+        if (accountActions.find(userId).getClass().getSimpleName() == "StudentChecking"){
+            //accountActions checks if recipientId is valid, if enough funds in user account, and does the transfer
+            return (StudentChecking) accountActions.transfer(userId, recipientId, money);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student Checking Account Id is invalid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be from a student checking account");
         }
     }
 

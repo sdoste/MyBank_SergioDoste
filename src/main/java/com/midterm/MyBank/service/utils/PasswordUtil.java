@@ -1,4 +1,4 @@
-package com.midterm.MyBank.service.users.utils;
+package com.midterm.MyBank.service.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

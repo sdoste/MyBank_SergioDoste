@@ -1,5 +1,4 @@
 package com.midterm.MyBank.model.Utils;
-import org.springframework.beans.propertyeditors.CurrencyEditor;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;

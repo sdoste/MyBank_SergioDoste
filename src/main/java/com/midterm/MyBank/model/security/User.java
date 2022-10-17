@@ -22,7 +22,7 @@ public abstract class User {
 //
 //    )
 //    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
 

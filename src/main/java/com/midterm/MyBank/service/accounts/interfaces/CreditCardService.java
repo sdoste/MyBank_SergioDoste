@@ -1,8 +1,6 @@
 package com.midterm.MyBank.service.accounts.interfaces;
 
 import com.midterm.MyBank.model.Utils.Money;
-import com.midterm.MyBank.model.accounts.Account;
-import com.midterm.MyBank.model.accounts.Checking;
 import com.midterm.MyBank.model.accounts.CreditCard;
 
 public interface CreditCardService {

@@ -48,9 +48,9 @@ public class Checking extends Account {
         BigDecimal amount = balance.getAmount();
         if (amount.compareTo(minimumBalance.getAmount()) >= 0) {
             this.balance = balance;
-            //if balance drops below minimum balance, penaltyFee is applied
+            //if balance drops below minimum balance, penaltyFee is applied on new balance
         } else {
-          this.balance = new Money(this.balance.decreaseAmount(penaltyFee));
+            this.balance = new Money(balance.decreaseAmount(penaltyFee));
         }
     }
 

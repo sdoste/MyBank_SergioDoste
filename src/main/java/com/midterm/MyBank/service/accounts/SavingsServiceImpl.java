@@ -1,10 +1,13 @@
 package com.midterm.MyBank.service.accounts;
 
+import com.midterm.MyBank.controller.dto.SavingsDTO;
+import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Savings;
 import com.midterm.MyBank.repository.SavingsRepository;
 import com.midterm.MyBank.service.accounts.interfaces.SavingsService;
-import com.midterm.MyBank.service.users.utils.AccountActions;
+import com.midterm.MyBank.service.utils.AccountActions;
+import com.midterm.MyBank.repository.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,24 +20,34 @@ public class SavingsServiceImpl implements SavingsService {
     //component with methods to transfer, find accounts (any type) and check if enough funds
     @Autowired
     AccountActions accountActions;
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public Savings get(String username, long id) {
-        if (savingsRepository.findById(id).isPresent()){
-            //account exists
-            return savingsRepository.findById(id).get();
-        } else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no Savings Account with this id");
-        }
+        return savingsRepository.findById(id).get();
     }
 
     @Override
-    public Savings save(Savings savingsAccount) {
-        try {
-            return savingsRepository.save(savingsAccount);
-        } catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while saving the Savings Account");
-        }
+    public Savings save(SavingsDTO savingsDTO) {
+//        try {
+            if (userRepository.findById(savingsDTO.getPrimaryOwnerId()).isPresent()) {
+                AccountHolder primaryOwner = (AccountHolder) userRepository.findById(savingsDTO.getPrimaryOwnerId()).get();
+                Savings newSavingsAccount = new Savings(savingsDTO.getSecretKey(), primaryOwner,
+                        savingsDTO.getInterestRate(), savingsDTO.getMinimumBalance(), savingsDTO.getBalance());
+                savingsRepository.save(newSavingsAccount);
+                if (savingsRepository.findById(newSavingsAccount.getId()).isPresent()){
+                    throw new ResponseStatusException(HttpStatus.OK, "Savings account created");
+                } else{
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Savings account apparently not created");
+                }
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect primary Owner Id");
+            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while saving the Checking account");
+//        }
     }
 
     @Override

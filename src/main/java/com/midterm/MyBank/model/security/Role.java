@@ -9,12 +9,11 @@ import java.util.Set;
 public class Role {
 
     @Id
-    @GeneratedValue
     private Long id;
     @Column(unique = true)
     private String name;
     @JsonIgnore
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<User> users;
     //constructor
     public Role() {

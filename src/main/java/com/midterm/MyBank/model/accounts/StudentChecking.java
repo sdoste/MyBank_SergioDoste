@@ -3,7 +3,6 @@ package com.midterm.MyBank.model.accounts;
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.Utils.Status;
-import com.midterm.MyBank.model.security.User;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
