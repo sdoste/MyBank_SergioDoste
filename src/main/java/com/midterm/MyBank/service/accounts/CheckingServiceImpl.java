@@ -82,6 +82,7 @@ public class CheckingServiceImpl implements CheckingService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect primary Owner Id");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while saving the Checking account");
         }
     }
