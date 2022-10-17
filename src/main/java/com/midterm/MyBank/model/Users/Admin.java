@@ -19,7 +19,5 @@ public class Admin extends User {
         super(username, password);
         this.name = name;
     }
-    public Admin(String name){
-        this.name = name;
-    }
+
 }

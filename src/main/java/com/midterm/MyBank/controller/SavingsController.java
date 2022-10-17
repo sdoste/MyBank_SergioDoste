@@ -1,4 +1,4 @@
-package com.midterm.MyBank.config.controller;
+package com.midterm.MyBank.controller;
 
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
@@ -14,28 +14,28 @@ public class SavingsController {
     @Autowired
     SavingsService savingsService;
 
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
     @GetMapping("/accounts/{username}/savings/{id}")
     public Savings get(@PathVariable String username, @PathVariable long id){
         return savingsService.get(username, id);
     }
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
     @PostMapping("/accounts/{username}/savings")
     public Savings create(@RequestBody Savings savingsAccount){
         return savingsService.save(savingsAccount);
     }
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
-    @PutMapping("/accounts/{username}/savings/{id}")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
+    @PatchMapping("/accounts/{username}/savings/{id}")
     public Savings update(@PathVariable long id, @RequestBody Savings savingsAccount){
         return savingsService.update(savingsAccount, id);
     }
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
     @PatchMapping("/accounts/{username}savings/{id}/transfer")
     public Savings transfer(@PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
         return savingsService.transfer(id, recipientId, money);
     }
 
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
     @DeleteMapping("/accounts/{username}/savings/{id}")
     public void delete (@PathVariable long id, @RequestBody Savings savingsAccount){
         savingsService.delete(savingsAccount);

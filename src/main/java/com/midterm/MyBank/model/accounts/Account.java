@@ -36,15 +36,11 @@ public class Account {
     //constructor with & primaryOwner
     protected Account(AccountHolder primaryOwner) {
         this.PrimaryOwner = primaryOwner;
-        //Initializing balance (will be set in each account constructor later)
-        this.balance = new Money(new BigDecimal("0.00"));
     }
     //constructor with primaryOwner & secondary owner
     protected Account(AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.PrimaryOwner = primaryOwner;
         this.SecondaryOwner = secondaryOwner;
-        //Initializing balance (will be set in each account constructor later)
-        this.balance = new Money(new BigDecimal("0.00"));
     }
 
     public long getId() {

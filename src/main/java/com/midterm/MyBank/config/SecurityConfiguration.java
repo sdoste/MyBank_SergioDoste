@@ -40,11 +40,11 @@ public class SecurityConfiguration {
         http.httpBasic();
         http.csrf().disable();
         http.authorizeRequests()
-                .mvcMatchers(HttpMethod.GET,  "/accounts/**").hasAnyRole("admin", "accountholder", "thirdparty")
-                .mvcMatchers(HttpMethod.POST, "/accounts/**").hasAnyRole("admin", "accountholder")
-                .mvcMatchers(HttpMethod.PUT, "/accounts/**").hasAnyRole("admin", "accountholder")
-                .mvcMatchers(HttpMethod.DELETE, "/accounts/**").hasRole("admin")
-                .mvcMatchers(HttpMethod.PATCH, "/accounts/**").hasAnyRole("admin", "accountholder")
+                .mvcMatchers(HttpMethod.GET,  "/accounts/**").hasAnyRole("ADMIN", "ACCOUNTHOLDER")
+                .mvcMatchers(HttpMethod.POST, "/accounts/**").hasAnyRole("ADMIN", "ACCOUNTHOLDER")
+                .mvcMatchers(HttpMethod.PUT, "/accounts/**").hasAnyRole("ADMIN", "ACCOUNTHOLDER")
+                .mvcMatchers(HttpMethod.DELETE, "/accounts/**").hasRole("ADMIN")
+                .mvcMatchers(HttpMethod.PATCH, "/accounts/**").hasAnyRole("ADMIN", "ACCOUNTHOLDER", "THIRDPARTY")
                 .antMatchers("/*").authenticated()
                 .anyRequest().permitAll();
 

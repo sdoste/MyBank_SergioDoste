@@ -1,4 +1,4 @@
-package com.midterm.MyBank.config.controller;
+package com.midterm.MyBank.controller;
 
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
@@ -17,24 +17,24 @@ public class StudentCheckingController {
     @Autowired
     StudentCheckingService studentCheckingService;
 
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
     @GetMapping("/accounts/{username}/checking/student/{id}")
     public StudentChecking get(@PathVariable String username, @PathVariable long id){
         return studentCheckingService.get(username, id);
     }
 
-    @PreAuthorize("hasRole('admin')")
-    @PutMapping("/accounts/{username}/checking/student/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/accounts/{username}/checking/student/{id}")
     public StudentChecking update(@PathVariable long id, @RequestBody StudentChecking studentCheckingAccount){
         return studentCheckingService.update(studentCheckingAccount, id);
     }
-    @PreAuthorize("#username == principal.username OR hasRole('admin')")
+    @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
     @PatchMapping("/accounts/{username}checking/student/{id}/transfer")
     public StudentChecking transfer(@PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
         return studentCheckingService.transfer(id, recipientId, money);
     }
 
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/accounts/{username}/checking/student/{id}")
     public void delete (@PathVariable long id, @RequestBody StudentChecking studentCheckingAccount){
         studentCheckingService.delete(studentCheckingAccount);

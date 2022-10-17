@@ -1,7 +1,9 @@
 package com.midterm.MyBank.service.accounts;
 
+import com.midterm.MyBank.controller.dto.CheckingDTO;
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Users.Admin;
+import com.midterm.MyBank.model.Users.ThirdParty;
 import com.midterm.MyBank.model.Utils.Address;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
@@ -11,6 +13,7 @@ import com.midterm.MyBank.model.security.Role;
 import com.midterm.MyBank.model.security.User;
 import com.midterm.MyBank.repository.CheckingRepository;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
+import com.midterm.MyBank.repository.security.RoleRepository;
 import com.midterm.MyBank.repository.security.UserRepository;
 import com.midterm.MyBank.service.accounts.interfaces.CheckingService;
 import com.midterm.MyBank.service.users.utils.AccountActions;
@@ -27,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.midterm.MyBank.service.users.utils.PasswordUtil.encryptPassword;
+import static org.apache.tomcat.jni.SSL.setPassword;
 
 @Service
 public class CheckingServiceImpl implements CheckingService {
@@ -39,6 +43,8 @@ public class CheckingServiceImpl implements CheckingService {
     AccountActions accountActions;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Override
     public Checking get(String username, long id) {
@@ -49,24 +55,33 @@ public class CheckingServiceImpl implements CheckingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no Checking Account with this id");
         }
     }
+    @Override
+    public CheckingDTO test(String hello) {
+        CheckingDTO checkingDTO = new CheckingDTO();
+        checkingDTO.setPrimaryOwnerId(1L);
+        checkingDTO.setBalance(new Money(new BigDecimal("888")));
+        checkingDTO.setSecretKey("123");
+        return checkingDTO;
+    }
 
     @Override
-    public Account save(Checking checkingAccount) {
-        try{
-            //if age is greater than 24, create checking account
-            if (Period.between(checkingAccount.getPrimaryOwner().getDateOfBirth(), LocalDate.now()).getYears() > 24){
-                return checkingRepository.save(checkingAccount);
-            } else {
-                //if age less than 24, we create and save a checking account
-                StudentChecking studentChecking = new StudentChecking();
-                studentChecking.setSecretKey(checkingAccount.getSecretKey());
-                studentChecking.setPrimaryOwner(checkingAccount.getPrimaryOwner());
-                if (!(checkingAccount.getSecondaryOwner() == null)){
-                    studentChecking.setSecondaryOwner(checkingAccount.getSecondaryOwner());
+    public Account save(CheckingDTO checkingDTO) {
+        try {
+            if (userRepository.findById(checkingDTO.getPrimaryOwnerId()).isPresent()) {
+                AccountHolder primaryOwner = (AccountHolder) userRepository.findById(checkingDTO.getPrimaryOwnerId()).get();
+                //if age is greater than 24, create checking account
+                if (Period.between(primaryOwner.getDateOfBirth(), LocalDate.now()).getYears() > 24) {
+                    Checking newAccount = new Checking(checkingDTO.getSecretKey(), primaryOwner, checkingDTO.getBalance());
+                    return checkingRepository.save(newAccount);
+                } else {
+                    //if age less than 24, we create and save a checking account
+                    StudentChecking newAccount = new StudentChecking(checkingDTO.getSecretKey(), primaryOwner, checkingDTO.getBalance());
+                    return studentCheckingRepository.save(newAccount);
                 }
-                return studentCheckingRepository.save(studentChecking);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect primary Owner Id");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while saving the Checking account");
         }
     }
@@ -111,43 +126,66 @@ public class CheckingServiceImpl implements CheckingService {
     }
 
     @PostConstruct
-    public void AccountHolderAndAdminCreation(){
-//        String name = "pepe";
-//        LocalDate dateOfBirth = LocalDate.now();
-//        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
-//        AccountHolder userPepe = new AccountHolder(name, dateOfBirth, address);
-//        Admin adminSergio = new Admin("sergio");
-//        //usernames and passwords
-//        userPepe.setUsername("pepe");
-//        userPepe.setPassword(encryptPassword("pepe123"));
-//
-//        adminSergio.setUsername("sergio");
-//        adminSergio.setPassword(encryptPassword("sergio2022"));
-//
-//        Role admin = new Role();
-//        admin.setName("admin");
-//        Set<User> users = new HashSet<>();
-//        users.add(adminSergio);
-//        admin.setUsers(users);
-//
-//        Role accountholder = new Role();
-//        accountholder.setName("accountholder");
-//        Set<User> users2 = new HashSet<>();
-//        users2.add(userPepe);
-//        admin.setUsers(users2);
-//
-//        userRepository.save(userPepe);
-//        userRepository.save(adminSergio);
-//
-//        AccountHolder recoveredUserPepe = (AccountHolder) userRepository.findById(1L).get();
+    public void UsersAndAccountCreationForTesting(){
+        //CREATING USERS
+        LocalDate dateOfBirth = LocalDate.now();
+        LocalDate date1992 = LocalDate.of(1992, 1, 8);
+        LocalDate date2000 = LocalDate.of(2000, 12, 4);
+
+        Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120" );
+        AccountHolder userJose = new AccountHolder("jose", encryptPassword("jose123"), "Jose garcía", date1992, address);
+        AccountHolder userPepita = new AccountHolder("pepita", encryptPassword("pepita123"), "Pepa sánchez", date2000, address);
+        Admin adminSergio = new Admin("sergio", encryptPassword("sergio2022"), "sergio doste");
+        ThirdParty movistar = new ThirdParty("movistar", encryptPassword("movistar2022"), "movistar", encryptPassword("123"));
+
+        //ASSIGNING ROLES
+        Role admin = new Role("ADMIN");
+        Set<User> users = new HashSet<>();
+        users.add(adminSergio);
+        admin.setUsers(users);
+        Set<Role> roles1 = new HashSet<>();
+        roles1.add(admin);
+        adminSergio.setRoles(roles1);
+
+        Role accountholder = new Role("ACCOUNTHOLDER");
+        Set<User> users2 = new HashSet<>();
+        users2.add(userJose);
+        users2.add(userPepita);
+        accountholder.setUsers(users2);
+        Set<Role> roles2 = new HashSet<>();
+        roles2.add(accountholder);
+        userJose.setRoles(roles2);
+        userPepita.setRoles(roles2);
+
+        Role thirdparty = new Role("THIRDPARTY");
+        Set<User> users3 = new HashSet<>();
+        users3.add(movistar);
+        thirdparty.setUsers(users3);
+        Set<Role> roles3 = new HashSet<>();
+        roles3.add(thirdparty);
+        movistar.setRoles(roles3);
+        //SAVING THEM
+        roleRepository.save(admin);
+        roleRepository.save(accountholder);
+        roleRepository.save(thirdparty);
+        userRepository.save(userJose);
+        userRepository.save(userPepita);
+        userRepository.save(adminSergio);
+        userRepository.save(movistar);
+
+        //ACCOUNT CREATION
+
+        //CHECKING
+
+        //SAVINGS
+
+        //CREDIT CARD
+        AccountHolder recoveredUserJose = (AccountHolder) userRepository.findById(userJose.getId()).get();
 //        Admin recoveredAdminSergio = (Admin) userRepository.findById(2L).get();
-//
-//        Checking pepeChecking = new Checking("123", recoveredUserPepe, new Money(new BigDecimal("555")));
-//        checkingRepository.save(pepeChecking);
-//
-//        AccountHolder userMaria = new AccountHolder("Maria", LocalDate.now(), address);
-//        userMaria.setUsername("maria");
-//        userMaria.setPassword(encryptPassword("maria123"));
-//        userRepository.save(userMaria);
+
+        Checking pepeCheckingAccount = new Checking("123", recoveredUserJose, new Money(new BigDecimal("1111")));
+        Checking MariaCheckingAccount = new Checking("123", userPepita, new Money(new BigDecimal("2222")));
+        checkingRepository.save(pepeCheckingAccount);
+        checkingRepository.save(MariaCheckingAccount);
     }
 }

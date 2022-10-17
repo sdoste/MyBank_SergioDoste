@@ -9,19 +9,23 @@ import java.util.Set;
 public abstract class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
     protected long id;
 
     private String username;
     private String password;
-
 //    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    @JoinTable(
 //            name = "users&roles",
 //            joinColumns = @JoinColumn(name = "user_id"),
 //            inverseJoinColumns = @JoinColumn(name = "role_id")
-
+//
 //    )
+//    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Role> roles;
+
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -30,10 +34,6 @@ public abstract class User {
     public User() {
 
     }
-
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles;
 
     public String getUsername() {
         return username;
@@ -57,5 +57,9 @@ public abstract class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public long getId() {
+        return id;
     }
 }

@@ -18,10 +18,11 @@ public class StudentChecking extends Account {
     protected Status status;
     public StudentChecking() {
     }
-    public StudentChecking(String secretKey, AccountHolder primaryOwner){
+    public StudentChecking(String secretKey, AccountHolder primaryOwner, Money balance){
         super(primaryOwner);
         this.secretKey = secretKey;
         this.creationDate = LocalDate.now();
+        this.balance = balance;
         this.status = Status.ACTIVE;
     }
     //setters and getters

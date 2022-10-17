@@ -13,8 +13,8 @@ public class Checking extends Account {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride( name = "currency", column = @Column(name = "checking_account_currency")),
-            @AttributeOverride( name = "amount", column = @Column(name = "checking_account_amount"))
+            @AttributeOverride( name = "currency", column = @Column(name = "minimum_balance_currency")),
+            @AttributeOverride( name = "amount", column = @Column(name = "minimum_balance_amount"))
     })
     private Money minimumBalance;
     protected LocalDate creationDate;
@@ -22,8 +22,6 @@ public class Checking extends Account {
     protected Status status;
     protected String secretKey;
     private BigDecimal monthlyMaintenanceFee;
-    private final BigDecimal defaultMinBalance = new BigDecimal("250");
-    private final BigDecimal defaultMonthlyMaintenanceFee = new BigDecimal("12");
 
 
     //constructors
@@ -33,9 +31,10 @@ public class Checking extends Account {
     public Checking(String secretKey, AccountHolder primaryOwner, Money balance) {
         super(primaryOwner);
         this.secretKey = secretKey;
-        this.monthlyMaintenanceFee = defaultMonthlyMaintenanceFee;
+        this.monthlyMaintenanceFee = new BigDecimal("12");
         this.creationDate = LocalDate.now();
-        this.minimumBalance = new Money(defaultMinBalance);
+        this.minimumBalance = new Money(new BigDecimal("250"));
+        this.balance = balance;
         setBalance(balance);
         this.status = Status.ACTIVE;
     }
