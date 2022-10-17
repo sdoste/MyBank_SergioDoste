@@ -137,6 +137,4 @@ public class CheckingServiceImpl implements CheckingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting account");
         }
     }
-
-
 }
