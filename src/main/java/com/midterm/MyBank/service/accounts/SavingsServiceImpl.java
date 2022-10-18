@@ -1,5 +1,6 @@
 package com.midterm.MyBank.service.accounts;
 
+import com.midterm.MyBank.controller.SavingsController;
 import com.midterm.MyBank.controller.dto.SavingsDTO;
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Utils.Money;
@@ -20,7 +21,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class SavingsServiceImpl implements SavingsService {
+public class SavingsServiceImpl extends SavingsController implements SavingsService {
     @Autowired
     SavingsRepository savingsRepository;
     //component with methods to transfer, find accounts (any type) and check if enough funds

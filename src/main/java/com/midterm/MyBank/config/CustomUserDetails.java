@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails extends Role implements UserDetails {
 
     private User user;
 
