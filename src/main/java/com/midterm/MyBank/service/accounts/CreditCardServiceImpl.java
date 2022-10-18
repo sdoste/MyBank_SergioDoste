@@ -10,6 +10,7 @@ import com.midterm.MyBank.repository.security.UserRepository;
 import com.midterm.MyBank.service.accounts.interfaces.CreditCardService;
 import com.midterm.MyBank.service.utils.AccountActions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,11 +22,12 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class CreditCardServiceImpl extends CreditCardController implements CreditCardService {
+public class CreditCardServiceImpl implements CreditCardService {
     @Autowired
     CreditCardRepository creditCardRepository;
     //component with methods to transfer, find accounts (any type) and check if enough funds
     @Autowired
+    @Lazy
     AccountActions accountActions;
     @Autowired
     UserRepository userRepository;

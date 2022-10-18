@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class StudentCheckingServiceImpl extends StudentCheckingController implements StudentCheckingService {
+public class StudentCheckingServiceImpl implements StudentCheckingService {
 
     @Autowired
     StudentCheckingRepository studentCheckingRepository;

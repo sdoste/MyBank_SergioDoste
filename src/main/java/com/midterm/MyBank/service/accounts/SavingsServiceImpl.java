@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class SavingsServiceImpl extends SavingsController implements SavingsService {
+public class SavingsServiceImpl implements SavingsService {
     @Autowired
     SavingsRepository savingsRepository;
     //component with methods to transfer, find accounts (any type) and check if enough funds
