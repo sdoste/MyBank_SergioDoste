@@ -18,3 +18,6 @@ IMPORTANT: in AccountActions (Service->Utils) there is a method annotated with @
 This method populates the database with several users an creates some accounts. The annotation
 "@PostConstruct" should be commented out or deleted after executing the app, otherwise it will
 create repeated users and accounts. In other words, it should be executed only once.
+            This method populates the database with several users an creates some accounts. The annotation 
+            "@PostConstruct" should be commented out or deleted after executing the app, otherwise it will
+            create repeated users and accounts. In other words, it should be executed only once.

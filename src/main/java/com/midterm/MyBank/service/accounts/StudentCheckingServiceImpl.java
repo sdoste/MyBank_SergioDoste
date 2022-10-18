@@ -1,5 +1,6 @@
 package com.midterm.MyBank.service.accounts;
 
+import com.midterm.MyBank.controller.StudentCheckingController;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.StudentChecking;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class StudentCheckingServiceImpl implements StudentCheckingService {
+public class StudentCheckingServiceImpl extends StudentCheckingController implements StudentCheckingService {
 
     @Autowired
     StudentCheckingRepository studentCheckingRepository;

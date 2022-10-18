@@ -1,12 +1,13 @@
 package com.midterm.MyBank.model.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.midterm.MyBank.model.accounts.Account;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-public abstract class User {
+public abstract class User extends Account {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
