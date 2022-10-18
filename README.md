@@ -1,10 +1,10 @@
 User case Diagram
 
-![img.png](img.png)
+![](\src\main\java\com\midterm\MyBank\User Case Diagram.png)
 
 Class diagram
 
-
+![](src/main/java/com/midterm/MyBank/Class Diagram.png)
 
 There are 4 types of accounts, Checking, studentChecking Credit Card, Savings. They innherit the class Account
 There are 3 types of users: Admin, AccountHolder, and ThirdParty. They inherit the class User
