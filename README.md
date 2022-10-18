@@ -5,6 +5,7 @@ User case Diagram
 Class diagram
 
 
+
 There are 4 types of accounts, Checking, studentChecking Credit Card, Savings. They innherit the class Account
 There are 3 types of users: Admin, AccountHolder, and ThirdParty. They inherit the class User
 
