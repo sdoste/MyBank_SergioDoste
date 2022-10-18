@@ -1,5 +1,9 @@
+User case Diagram
+
+![img.png](img.png)
+
 Class diagram
-![](C:\Users\sergio\IdeaProjects\MyBank_SergioDoste\Diagram.drawio)
+
 
 There are 4 types of accounts, Checking, studentChecking Credit Card, Savings. They innherit the class Account
 There are 3 types of users: Admin, AccountHolder, and ThirdParty. They inherit the class User
@@ -18,6 +22,4 @@ IMPORTANT: in AccountActions (Service->Utils) there is a method annotated with @
 This method populates the database with several users an creates some accounts. The annotation
 "@PostConstruct" should be commented out or deleted after executing the app, otherwise it will
 create repeated users and accounts. In other words, it should be executed only once.
-            This method populates the database with several users an creates some accounts. The annotation 
-            "@PostConstruct" should be commented out or deleted after executing the app, otherwise it will
-            create repeated users and accounts. In other words, it should be executed only once.
+          
