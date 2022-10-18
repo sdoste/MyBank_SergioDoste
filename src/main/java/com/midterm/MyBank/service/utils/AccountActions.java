@@ -49,65 +49,65 @@ public class AccountActions {
             return creditCardRepository.findById(id).get();
         } else if (savingsRepository.findById(id).isPresent()) {
             return savingsRepository.findById(id).get();
-        } else if (savingsRepository.findById(id).isPresent()) {
-            return savingsRepository.findById(id).get();
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account holder id is invalid");
+            return null;
         }
     }
-    public Account transfer(long userId, long recipientId, Money money){
-        Account issuingAccount = find(userId);
-        if (!(find(recipientId) == null)){
-            //Recipient Id is VALID
-            if (enoughFunds(userId, money)){
+//    public Account transfer(long userId, long recipientAccountId, Money money){
+//        Account issuingAccount = find(userId);
+//        if (!(find(recipientAccountId) == null)){
+//            //Recipient Account Id is VALID
+//            if (enoughFunds(userId, money)){
+//                //ENOUGH FUNDS
+//                Account recipientAccount = find(recipientAccountId);
+//                issuingAccount.setBalance(new Money(issuingAccount.getBalance().decreaseAmount(money)));
+//                recipientAccount.setBalance(new Money(recipientAccount.getBalance().increaseAmount(money)));
+//            } else
+//                //NOT ENOUGH FUNDS
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds in your account");
+//        } else  {
+//            //Recipient Id INVALID
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipient account id is invalid");
+//        }
+//        return issuingAccount;
+//    }
+    public boolean transferred(long userId, long recipientAccountId, Money money){
+        if (find(recipientAccountId) == null){
+            //Recipient Account is  INVALID
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipient account id is invalid");
+        } else{
+            if (enoughFunds(userId, money)) {
                 //ENOUGH FUNDS
-                Account recipientAccount = find(recipientId);
-                issuingAccount.setBalance(new Money(issuingAccount.getBalance().decreaseAmount(money)));
-                recipientAccount.setBalance(new Money(recipientAccount.getBalance().increaseAmount(money)));
-            } else
+                switch (find(recipientAccountId).getClass().getSimpleName()) {
+                    case "Checking":
+                        Checking checkingAccount = checkingRepository.findById(recipientAccountId).get();
+                        checkingAccount.setBalance(new Money(checkingAccount.getBalance().increaseAmount(money)));
+                        checkingRepository.save(checkingAccount);
+                        return true;
+                    case "StudentChecking":
+                        StudentChecking studentCheckingAccount = studentCheckingRepository.findById(recipientAccountId).get();
+                        studentCheckingAccount.setBalance(new Money(studentCheckingAccount.getBalance().increaseAmount(money)));
+                        studentCheckingRepository.save(studentCheckingAccount);
+                        return true;
+                    case "Savings":
+                        Savings savingsAccount = savingsRepository.findById(recipientAccountId).get();
+                        savingsAccount.setBalance(new Money(savingsAccount.getBalance().increaseAmount(money)));
+                        savingsRepository.save(savingsAccount);
+                        return true;
+                    case "CreditCard":
+                        CreditCard creditCardAccount = creditCardRepository.findById(recipientAccountId).get();
+                        creditCardAccount.setBalance(new Money(creditCardAccount.getBalance().increaseAmount(money)));
+                        creditCardRepository.save(creditCardAccount);
+                        return true;
+                    default:
+                        return false;
+                }
+            } else {
                 //NOT ENOUGH FUNDS
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds in your account");
-        } else  {
-            //Recipient Id INVALID
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong recipient Id");
+            }
         }
-        return issuingAccount;
     }
-//    public Account transfer(long userId, long recipientId, Money money){
-//        Account recoveredAccount = find(userId);
-//        if (find(recipientId) == null){
-//            //Recipient Id INVALID
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong recipient Id");
-//        } else if (enoughFunds(userId, money)) {
-//            //ENOUGH FUNDS
-//            switch (find(userId).getClass().getSimpleName()) {
-//                case "Checking":
-//                    Checking checkingAccount = (Checking) find(userId);
-//                    recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(money)));
-//                    checkingAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(money)));
-//                break;
-//                case "StudentChedking":
-//                    StudentChecking studentCheckingAccount = (StudentChecking) find(userId);
-//                    recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(money)));
-//                    studentCheckingAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(money)));
-//                break;
-//                case "Savings":
-//                    Savings savingsAccount = (Savings) find(userId);
-//                    recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(money)));
-//                    savingsAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(money)));
-//                break;
-//                case "CreditCard":
-//                    CreditCard creditCardAccount = (CreditCard) find(userId);
-//                    recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(money)));
-//                    creditCardAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(money)));
-//                break;
-//            }
-//        } else {
-//            //NOT ENOUGH FUNDS
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds in your account");
-//        }
-//        return recoveredAccount;
-//    }
     public Account transferToThirdParty(long userId, long thirdPartyId, Money money){
         Account issuingAccount = find(userId);
         if (userRepository.findById(thirdPartyId).isPresent()){
@@ -133,7 +133,7 @@ public class AccountActions {
         }
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void UsersAndAccountCreationForTesting(){
         //CREATING USERS
         LocalDate dateOfBirth = LocalDate.now();

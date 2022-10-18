@@ -74,12 +74,15 @@ public class StudentCheckingServiceImpl implements StudentCheckingService {
 
     @Override
     public StudentChecking transfer(long userId, long recipientId, Money money){
-        //checking if account is a Credit Card
-        if (accountActions.find(userId).getClass().getSimpleName() == "StudentChecking"){
-            //accountActions checks if recipientId is valid, if enough funds in user account, and does the transfer
-            return (StudentChecking) accountActions.transfer(userId, recipientId, money);
+        StudentChecking studentCheckingAccount = studentCheckingRepository.findById(userId).get();
+        //AA checks if recipientId valid, if enough funds in account, and adds money
+        if (accountActions.transferred(userId, recipientId, money)){
+            //so money has been added to another account, so it's subtracted from this account
+            studentCheckingAccount.setBalance(new Money(studentCheckingAccount.getBalance().decreaseAmount(money)));
+            studentCheckingRepository.save(studentCheckingAccount);
+            return studentCheckingAccount;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be from a student checking account");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while transferring money");
         }
     }
 

@@ -5,6 +5,7 @@ import com.midterm.MyBank.model.Utils.Money;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Entity
@@ -25,6 +26,7 @@ public class CreditCard extends Account {
             @AttributeOverride( name = "amount", column = @Column(name = "credit_amount"))
     })
     protected Money creditLimit;
+    @Column(name = "interest_rate", precision = 19, scale = 4)
     protected BigDecimal interestRate;
 
     protected LocalDate lastAppliedInterestDate;
@@ -37,7 +39,6 @@ public class CreditCard extends Account {
     public CreditCard(Money balance, AccountHolder primaryOwner, BigDecimal creditLimit, BigDecimal interestRate){
         //if balance not given, 0 by default
         super(primaryOwner);
-
         if (balance == null){
             this.balance = new Money(new BigDecimal("0.00"));
         } else{
@@ -54,6 +55,7 @@ public class CreditCard extends Account {
         } else{
             setInterestRate(interestRate);
         }
+        this.lastAppliedInterestDate = LocalDate.now();
     }
 
     //setters and getters
@@ -85,19 +87,19 @@ public class CreditCard extends Account {
     }
     // setters & getters
     public Money getBalance() {
-        return balance;
+        return this.balance;
     }
     public void setBalance(Money balance) {
         this.balance = balance;
     }
 
     public AccountHolder getPrimaryOwner() {
-        return PrimaryOwner;
+        return this.primaryOwner;
     }
 
 
     public Money getCreditLimit() {
-        return creditLimit;
+        return this.creditLimit;
     }
 
     public void setCreditLimit(Money creditLimit) {
@@ -105,11 +107,11 @@ public class CreditCard extends Account {
     }
 
     public BigDecimal getInterestRate() {
-        return interestRate;
+        return this.interestRate;
     }
 
     public Money getPenaltyFee() {
-        return penaltyFee;
+        return this.penaltyFee;
     }
 
     public void setPenaltyFee(Money penaltyFee) {
@@ -117,10 +119,11 @@ public class CreditCard extends Account {
     }
 
     public LocalDate getLastAppliedInterestDate() {
-        return lastAppliedInterestDate;
+        return this.lastAppliedInterestDate;
     }
 
     public void setLastAppliedInterestDate(LocalDate lastAppliedInterestDate) {
         this.lastAppliedInterestDate = lastAppliedInterestDate;
     }
+
 }

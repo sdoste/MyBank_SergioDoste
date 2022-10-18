@@ -16,29 +16,27 @@ public class Account {
     @Embedded
     protected Money balance;
     @ManyToOne
-    protected AccountHolder PrimaryOwner;
+    protected AccountHolder primaryOwner;
     @ManyToOne
-    protected AccountHolder SecondaryOwner;
+    protected AccountHolder secondaryOwner;
     @Embedded
     @AttributeOverrides({
             @AttributeOverride( name = "currency", column = @Column(name = "penalty_fee_currency")),
             @AttributeOverride( name = "amount", column = @Column(name = "penalty_fee_amount"))
     })
     protected Money penaltyFee = new Money(new BigDecimal("40"));
-    @Enumerated(EnumType.STRING)
-    protected Status status;
 
     //constructors
     public Account() { }
 
     //constructor with & primaryOwner
     protected Account(AccountHolder primaryOwner) {
-        this.PrimaryOwner = primaryOwner;
+        this.primaryOwner = primaryOwner;
     }
     //constructor with primaryOwner & secondary owner
     protected Account(AccountHolder primaryOwner, AccountHolder secondaryOwner) {
-        this.PrimaryOwner = primaryOwner;
-        this.SecondaryOwner = secondaryOwner;
+        this.primaryOwner = primaryOwner;
+        this.secondaryOwner = secondaryOwner;
     }
 
     public long getId() {
@@ -50,19 +48,19 @@ public class Account {
     }
 
     public AccountHolder getPrimaryOwner() {
-        return PrimaryOwner;
+        return primaryOwner;
     }
 
     public void setPrimaryOwner(AccountHolder primaryOwner) {
-        PrimaryOwner = primaryOwner;
+        this.primaryOwner = primaryOwner;
     }
 
     public AccountHolder getSecondaryOwner() {
-        return SecondaryOwner;
+        return secondaryOwner;
     }
 
-    public void setSecondaryOwner(AccountHolder secondaryOwner) {
-        SecondaryOwner = secondaryOwner;
+    public void setSecondaryOwner(AccountHolder secondaryowner) {
+        this.secondaryOwner = secondaryowner;
     }
 
     public Money getPenaltyFee() {
@@ -80,15 +78,5 @@ public class Account {
     public void setBalance(Money balance) {
         this.balance = balance;
     }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-
 
 }

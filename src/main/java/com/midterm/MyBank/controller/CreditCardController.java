@@ -1,5 +1,6 @@
 package com.midterm.MyBank.controller;
 
+import com.midterm.MyBank.controller.dto.CreditCardDTO;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.CreditCard;
 import com.midterm.MyBank.repository.CreditCardRepository;
@@ -10,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @RestController
@@ -21,7 +24,7 @@ public class CreditCardController {
 
     //USER ACTIONS
     @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
-    @GetMapping("/accounts/{username}/savings/{id}")
+    @GetMapping("/accounts/{username}/creditcard/{id}")
     public CreditCard get(@PathVariable String username, @PathVariable long id){
         if (creditCardRepository.findById(id).isPresent() &&
                 (Objects.equals(creditCardRepository.findById(id).get().getPrimaryOwner().getUsername(), username))) {
@@ -31,8 +34,8 @@ public class CreditCardController {
         }
     }
     @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
-    @PatchMapping("/accounts/{username}savings/{id}/transfer")
-    public CreditCard transfer(@PathVariable String username, @PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
+    @PatchMapping("/accounts/{username}/creditcard/{id}/transferTo/{recipientId}")
+    public CreditCard transfer(@PathVariable String username, @PathVariable long id, @PathVariable long recipientId, @RequestBody Money money){
         if (creditCardRepository.findById(id).isPresent() &&
                 (Objects.equals(creditCardRepository.findById(id).get().getPrimaryOwner().getUsername(), username))) {
             return creditCardService.transfer(id, recipientId, money);
@@ -42,19 +45,31 @@ public class CreditCardController {
     }
     //ADMIN ONLY
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/accounts/savings")
-    public CreditCard create(@RequestBody CreditCardDTO savingsAccountDTO){
-        return creditCardService.save(savingsAccountDTO);
+    @PostMapping("/accounts/creditcard")
+    public CreditCard create(@RequestBody CreditCardDTO creditCardDTO){
+        return creditCardService.save(creditCardDTO);
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/accounts/savings/{id}")
-    public CreditCard update(@PathVariable long id, @RequestBody CreditCard savingsAccount){
-        return creditCardService.update(savingsAccount, id);
+    @PatchMapping("/accounts/creditcard/{id}/interestDate/{newDate}")
+    public CreditCard updateLastAppliedInterestRate(@PathVariable long id, @PathVariable String newDate){
+        if (creditCardRepository.findById(id).isPresent()){
+            //account exists
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate localDate;
+            try {
+                localDate = LocalDate.parse(newDate, formatter);
+            } catch(Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong date format");
+            }
+            return creditCardService.updateLastAppliedInterestRate(localDate, id);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credit card account does not exist");
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/accounts/savings/{id}")
-    public void delete (@PathVariable long id, @RequestBody CreditCard savingsAccount){
-        creditCardService.delete(savingsAccount);
+    @DeleteMapping("/accounts/creditcard/{id}")
+    public void delete (@PathVariable long id, @RequestBody CreditCard creditCardAccount){
+        creditCardService.delete(creditCardAccount);
     }
 }

@@ -2,19 +2,12 @@ package com.midterm.MyBank.service.accounts;
 
 import com.midterm.MyBank.controller.dto.CheckingDTO;
 import com.midterm.MyBank.model.Users.AccountHolder;
-import com.midterm.MyBank.model.Users.Admin;
-import com.midterm.MyBank.model.Users.ThirdParty;
-import com.midterm.MyBank.model.Utils.Address;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.Account;
 import com.midterm.MyBank.model.accounts.Checking;
-import com.midterm.MyBank.model.accounts.Savings;
 import com.midterm.MyBank.model.accounts.StudentChecking;
-import com.midterm.MyBank.model.security.Role;
 import com.midterm.MyBank.repository.CheckingRepository;
-import com.midterm.MyBank.repository.SavingsRepository;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
-import com.midterm.MyBank.repository.security.RoleRepository;
 import com.midterm.MyBank.repository.security.UserRepository;
 import com.midterm.MyBank.service.accounts.interfaces.CheckingService;
 import com.midterm.MyBank.service.utils.AccountActions;
@@ -23,13 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Set;
-
-import static com.midterm.MyBank.service.utils.PasswordUtil.encryptPassword;
 
 @Service
 public class CheckingServiceImpl implements CheckingService {
@@ -119,12 +107,15 @@ public class CheckingServiceImpl implements CheckingService {
 
     @Override
     public Checking transfer(long userId, long recipientId, Money money){
-        //checking if account is a Credit Card
-        if (accountActions.find(userId).getClass().getSimpleName().equals("Checking")){
-            //accountActions checks if recipientId is valid, if enough funds in user account, and does the transfer
-            return (Checking) accountActions.transfer(userId, recipientId, money);
+        Checking checkingAccount = checkingRepository.findById(userId).get();
+        //AA checks if recipientId valid, if enough funds in account, and adds money
+        if (accountActions.transferred(userId, recipientId, money)){
+            //so money has been added to another account, so it's subtracted from this account
+            checkingAccount.setBalance(new Money(checkingAccount.getBalance().decreaseAmount(money)));
+            checkingRepository.save(checkingAccount);
+            return checkingAccount;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id must be from a checking account");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while transferring money");
         }
     }
 

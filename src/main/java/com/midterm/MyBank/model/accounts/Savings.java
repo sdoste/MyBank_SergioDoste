@@ -35,13 +35,13 @@ public class Savings extends Account{
         super(PrimaryOwner);
         this.secretKey = secretKey;
         this.creationDate = LocalDate.now();
-        lastAppliedInterestDate = LocalDate.now();
         if (interestRate == null){
             // 0.0025
             this.interestRate = defaultRate;
         } else {
             setInterestRate(interestRate);
         }
+        lastAppliedInterestDate = LocalDate.now();
         if (minimumBalance == null){
             // 1000
             this.minimumBalance = new Money (defaultMinBalance);
@@ -55,16 +55,16 @@ public class Savings extends Account{
 
 
     public Money getMinimumBalance() {
-        return minimumBalance;
+        return this.minimumBalance;
     }
 
 
     public BigDecimal getInterestRate() {
-        return interestRate;
+        return this.interestRate;
     }
 
     public LocalDate getLastAppliedInterest() {
-        return lastAppliedInterestDate;
+        return this.lastAppliedInterestDate;
     }
 
     public void setLastAppliedInterest(LocalDate lastAppliedInterest) {
@@ -97,7 +97,7 @@ public class Savings extends Account{
             this.minimumBalance = new Money(givenMinBalance);
         }
     }
-
+    @Override
     public void setBalance(Money balance) {
         BigDecimal currentAmount = balance.getAmount();
         if (currentAmount.compareTo(minimumBalance.getAmount()) >= 0) {
@@ -117,20 +117,19 @@ public class Savings extends Account{
     }
 
     public LocalDate getCreationDate() {
-        return creationDate;
+        return this.creationDate;
     }
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
-    @Override
     public Status getStatus() {
-        return status;
+        return this.status;
     }
 
-    @Override
     public void setStatus(Status status) {
         this.status = status;
     }
+
 }

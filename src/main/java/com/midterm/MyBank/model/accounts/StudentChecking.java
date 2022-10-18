@@ -27,7 +27,7 @@ public class StudentChecking extends Account {
     //setters and getters
 
     public String getSecretKey() {
-        return secretKey;
+        return this.secretKey;
     }
 
     public void setSecretKey(String secretKey) {
@@ -35,7 +35,7 @@ public class StudentChecking extends Account {
     }
 
     public LocalDate getCreationDate() {
-        return creationDate;
+        return this.creationDate;
     }
 
     public void setCreationDate(LocalDate creationDate) {
@@ -43,7 +43,7 @@ public class StudentChecking extends Account {
     }
 
     public Status getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(Status status) {

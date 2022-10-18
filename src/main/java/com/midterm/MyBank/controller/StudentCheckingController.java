@@ -32,13 +32,14 @@ public class StudentCheckingController {
         }
     }
     @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
-    @PatchMapping("/accounts/{username}checking/student/{id}/transfer")
-    public StudentChecking transfer(@PathVariable String username, @PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
+    @PatchMapping("/accounts/{username}/checking/student/{id}/transferTo/{recipientId}")
+    public StudentChecking transfer(@PathVariable String username, @PathVariable long id, @PathVariable long recipientId, @RequestBody Money money){
+        //checking Account id exists, primaryOwner is the logged in user, and is a student checking account
         if (studentCheckingRepository.findById(id).isPresent() &&
                 (Objects.equals(studentCheckingRepository.findById(id).get().getPrimaryOwner().getUsername(), username))){
             return studentCheckingService.transfer(id, recipientId, money);
         } else{
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account id not found for this username");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student Checking Account id not found for this username");
         }
     }
 
@@ -59,7 +60,7 @@ public class StudentCheckingController {
         return studentCheckingService.decreaseBalance(subtractedBalance, id);
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/accounts/{username}/checking/student/{id}")
+    @PutMapping("/accounts/{username}/checking/student/{id}")
     public StudentChecking update(@PathVariable long id, @RequestBody StudentChecking studentCheckingAccount){
         return studentCheckingService.update(studentCheckingAccount, id);
     }

@@ -35,8 +35,8 @@ public class CheckingController {
         }
     }
     @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
-    @PatchMapping("/accounts/{username}checking/{id}/transfer")
-    public Checking transfer(@PathVariable String username, @PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
+    @PatchMapping("/accounts/{username}/checking/{id}/transferTo/{recipientId}")
+    public Checking transfer(@PathVariable String username, @PathVariable long id, @PathVariable long recipientId, @RequestBody Money money){
         if (checkingRepository.findById(id).isPresent() &&
                 (Objects.equals(checkingRepository.findById(id).get().getPrimaryOwner().getUsername(), username))) {
             return checkingService.transfer(id, recipientId, money);
@@ -66,7 +66,7 @@ public class CheckingController {
         return checkingService.decreaseBalance(subtractedBalance, id);
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/accounts/checking/{id}")
+    @PutMapping("/accounts/checking/{id}")
     public Checking update(@PathVariable long id, @RequestBody Checking checkingAccount){
         return checkingService.update(checkingAccount, id);
     }

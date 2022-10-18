@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-public class ThirdPartyController {
+public class ThirdPartyAccountsController {
     @Autowired
     ThirdPartyService thirdPartyService;
     @Autowired

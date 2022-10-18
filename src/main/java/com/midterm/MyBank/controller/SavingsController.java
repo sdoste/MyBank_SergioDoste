@@ -2,6 +2,7 @@ package com.midterm.MyBank.controller;
 
 import com.midterm.MyBank.controller.dto.SavingsDTO;
 import com.midterm.MyBank.model.Utils.Money;
+import com.midterm.MyBank.model.accounts.CreditCard;
 import com.midterm.MyBank.model.accounts.Savings;
 import com.midterm.MyBank.service.accounts.interfaces.SavingsService;
 import com.midterm.MyBank.repository.SavingsRepository;
@@ -11,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @RestController
@@ -32,8 +35,8 @@ public class SavingsController {
         }
     }
     @PreAuthorize("#username == principal.username OR hasRole('ADMIN')")
-    @PatchMapping("/accounts/{username}savings/{id}/transfer")
-    public Savings transfer(@PathVariable String username, @PathVariable long id, @RequestBody long recipientId, @RequestBody Money money){
+    @PatchMapping("/accounts/{username}/savings/{id}/transferTo/{recipientId}")
+    public Savings transfer(@PathVariable String username, @PathVariable long id, @PathVariable long recipientId, @RequestBody Money money){
         if (savingsRepository.findById(id).isPresent() &&
                 (Objects.equals(savingsRepository.findById(id).get().getPrimaryOwner().getUsername(), username))) {
             return savingsService.transfer(id, recipientId, money);
@@ -48,9 +51,21 @@ public class SavingsController {
         return savingsService.save(savingsAccountDTO);
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/accounts/savings/{id}")
-    public Savings update(@PathVariable long id, @RequestBody Savings savingsAccount){
-        return savingsService.update(savingsAccount, id);
+    @PutMapping("/accounts/savings/{id}/interestDate/{newDate}")
+    public Savings updateLastAppliedInterestRate(@PathVariable long id, @PathVariable String newDate){
+        if (savingsRepository.findById(id).isPresent()){
+            //account exists
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate localDate;
+            try {
+                localDate = LocalDate.parse(newDate, formatter);
+            } catch(Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong date format");
+            }
+            return savingsService.updateLastAppliedInterestRate(localDate, id);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saving account does not exist");
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
