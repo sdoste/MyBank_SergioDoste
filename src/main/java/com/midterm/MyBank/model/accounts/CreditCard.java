@@ -30,7 +30,7 @@ public class CreditCard extends Account {
 
     protected LocalDate lastAppliedInterestDate;
     private final BigDecimal defaultCreditLimit = new BigDecimal("100");
-    private final BigDecimal defaultInterestRate = new BigDecimal("0.2");
+    private final BigDecimal defaultInterestRate = new BigDecimal("0.2000");
     //constructors
     public CreditCard(){
 
@@ -72,7 +72,7 @@ public class CreditCard extends Account {
     }
 
     public void setInterestRate(BigDecimal interestRate) {
-        BigDecimal minRate = new BigDecimal("0.1");
+        BigDecimal minRate = new BigDecimal("0.1000");
         //if interestRate less or equal to 0.1, set it to 0.1
         if (interestRate.compareTo(minRate) <= 0){
             this.interestRate = minRate;

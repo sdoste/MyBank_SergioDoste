@@ -24,7 +24,15 @@ class CreditCardTest {
         //if null interestRate and credit limit
         CreditCard userFranAccount = new CreditCard(new Money(new BigDecimal("1111")), userFran,null, null);
         assertEquals(new BigDecimal("100.00"), userFranAccount.getCreditLimit().getAmount());
-        assertEquals(new BigDecimal("0.2"), userFranAccount.getInterestRate());
+        assertEquals(new BigDecimal("0.2000"), userFranAccount.getInterestRate());
+
+        //if interestRate lower than 0.1, should be set to 0.1
+        CreditCard userFranAccount2 = new CreditCard(new Money(new BigDecimal("1111")), userFran,null, new BigDecimal("0.002"));
+        assertEquals(new BigDecimal("0.1000"), userFranAccount2.getInterestRate());
+
+        //if creditLimit higher than 100 000, should be set toi 100 000
+        CreditCard userFranAccount3 = new CreditCard(new Money(new BigDecimal("1111")), userFran,new BigDecimal("10005000"), null);
+        assertEquals(new BigDecimal("100000.00"), userFranAccount3.getCreditLimit().getAmount());
     }
 
     @Test
