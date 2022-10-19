@@ -1,6 +1,5 @@
 package com.midterm.MyBank.service.accounts;
 
-import com.midterm.MyBank.controller.StudentCheckingController;
 import com.midterm.MyBank.model.Utils.Money;
 import com.midterm.MyBank.model.accounts.StudentChecking;
 import com.midterm.MyBank.repository.StudentCheckingRepository;
@@ -88,9 +87,9 @@ public class StudentCheckingServiceImpl implements StudentCheckingService {
     }
 
     @Override
-    public void delete(StudentChecking studentCheckingAccount) {
+    public void delete(long id) {
         try {
-            studentCheckingRepository.delete(studentCheckingAccount);
+            studentCheckingRepository.deleteById(id);
         }
         catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting account");

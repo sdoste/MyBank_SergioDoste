@@ -1,7 +1,6 @@
 package com.midterm.MyBank.controller;
 
 import com.midterm.MyBank.controller.dto.AccountDTO;
-import com.midterm.MyBank.model.accounts.Checking;
 import com.midterm.MyBank.repository.security.UserRepository;
 import com.midterm.MyBank.service.utils.YourHomePageService;
 import org.springframework.beans.factory.annotation.Autowired;

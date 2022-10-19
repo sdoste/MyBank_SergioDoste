@@ -10,5 +10,5 @@ public interface StudentCheckingService {
     StudentChecking increaseBalance(Money subtractedBalance, long id);
     StudentChecking decreaseBalance(Money subtractedBalance, long id);
     StudentChecking transfer(long userId, long recipientId, Money money);
-    void delete(StudentChecking studentCheckingAccount);
+    void delete(long id);
 }

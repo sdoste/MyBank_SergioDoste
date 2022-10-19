@@ -1,7 +1,6 @@
 package com.midterm.MyBank.service.utils;
 
 import com.midterm.MyBank.controller.dto.AccountDTO;
-import com.midterm.MyBank.model.Users.AccountHolder;
 
 import com.midterm.MyBank.model.accounts.Checking;
 import com.midterm.MyBank.model.accounts.CreditCard;

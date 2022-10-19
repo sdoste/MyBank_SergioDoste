@@ -1,6 +1,5 @@
 package com.midterm.MyBank.service.accounts;
 
-import com.midterm.MyBank.controller.SavingsController;
 import com.midterm.MyBank.controller.dto.SavingsDTO;
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Utils.Money;
@@ -18,7 +17,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Period;
 
 @Service
 public class SavingsServiceImpl implements SavingsService {
@@ -78,10 +76,43 @@ public class SavingsServiceImpl implements SavingsService {
     }
 
     @Override
+    public Savings modifyBalance(Money newBalance, long id){
+        if (savingsRepository.findById(id).isPresent()){
+            //account exists
+            Savings recoveredAccount = savingsRepository.findById(id).get();
+            recoveredAccount.setBalance(newBalance);
+            return savingsRepository.save(recoveredAccount);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
+        }
+    }
+    @Override
+    public Savings increaseBalance(Money addedBalance, long id){
+        if (savingsRepository.findById(id).isPresent()){
+            //account exists
+            Savings recoveredAccount = savingsRepository.findById(id).get();
+            recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().increaseAmount(addedBalance)));
+            return savingsRepository.save(recoveredAccount);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
+        }
+    }
+    @Override
+    public Savings decreaseBalance(Money subtractedBalance, long id){
+        if (savingsRepository.findById(id).isPresent()){
+            //account exists
+            Savings recoveredAccount = savingsRepository.findById(id).get();
+            recoveredAccount.setBalance(new Money(recoveredAccount.getBalance().decreaseAmount(subtractedBalance)));
+            return savingsRepository.save(recoveredAccount);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
+        }
+    }
+    @Override
     public void applyYearInterestRate(Long id) {
         if (savingsRepository.findById(id).isPresent()){
             Savings recoveredSavingsAcc = savingsRepository.findById(id).get();
-            int DaysSinceLastApplied = (int) Duration.between(recoveredSavingsAcc.getLastAppliedInterest().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays();;
+            int DaysSinceLastApplied = (int) Duration.between(recoveredSavingsAcc.getLastAppliedInterest().atStartOfDay(), LocalDate.now().atStartOfDay()).toDays();
             ////if more than 1 year (365 days) has passed since last time interest was applied, add appropriate interest
             if (DaysSinceLastApplied > 365){
                 //Yearly interest x balance = Interest for the whole year
@@ -101,10 +132,12 @@ public class SavingsServiceImpl implements SavingsService {
         }
     }
 
+
+
     @Override
-    public void delete(Savings savingsAccount) {
+    public void delete(long id) {
         try {
-            savingsRepository.delete(savingsAccount);
+            savingsRepository.deleteById(id);
         }
         catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting savings account");

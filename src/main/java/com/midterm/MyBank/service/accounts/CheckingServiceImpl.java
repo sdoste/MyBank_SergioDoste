@@ -120,9 +120,9 @@ public class CheckingServiceImpl implements CheckingService {
     }
 
     @Override
-    public void delete(Checking checkingAccount) {
+    public void delete(long id) {
         try {
-            checkingRepository.delete(checkingAccount);
+            checkingRepository.deleteById(id);
         }
         catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting account");

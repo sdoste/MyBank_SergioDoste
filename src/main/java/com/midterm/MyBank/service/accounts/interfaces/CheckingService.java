@@ -14,5 +14,5 @@ public interface CheckingService {
     Checking decreaseBalance(Money subtractedBalance, long id);
     Checking update(Checking checkingAccount, long id);
     Checking transfer(long userId, long recipientId, Money money);
-    void delete(Checking checkingAccount);
+    void delete(long id);
 }

@@ -2,7 +2,6 @@ package com.midterm.MyBank.controller;
 
 import com.midterm.MyBank.controller.dto.SavingsDTO;
 import com.midterm.MyBank.model.Utils.Money;
-import com.midterm.MyBank.model.accounts.CreditCard;
 import com.midterm.MyBank.model.accounts.Savings;
 import com.midterm.MyBank.service.accounts.interfaces.SavingsService;
 import com.midterm.MyBank.repository.SavingsRepository;
@@ -69,8 +68,28 @@ public class SavingsController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/accounts/savings/{id}")
-    public void delete (@PathVariable long id, @RequestBody Savings savingsAccount){
-        savingsService.delete(savingsAccount);
+    @PatchMapping("/accounts/savings/{id}/modifyBalance")
+    public Savings modifyBalance(@PathVariable long id, @RequestBody Money newBalance){
+        return savingsService.modifyBalance(newBalance, id);
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/accounts/savings/{id}/increaseBalance")
+    public Savings increaseBalance(@PathVariable long id, @RequestBody Money addedBalance){
+        return savingsService.increaseBalance(addedBalance, id);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/accounts/savings/{id}/decreaseBalance")
+    public Savings decreaseBalance(@PathVariable long id, @RequestBody Money subtractedBalance){
+        return savingsService.decreaseBalance(subtractedBalance, id);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/accounts/savings/{id}")
+    public void delete (@PathVariable long id){
+        if (savingsRepository.findById(id).isPresent()){
+            savingsService.delete(id);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account id");
+        }
+    }
+
 }

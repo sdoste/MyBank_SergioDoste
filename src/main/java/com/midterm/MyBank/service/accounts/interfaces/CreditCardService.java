@@ -12,5 +12,5 @@ public interface CreditCardService {
     CreditCard updateLastAppliedInterestRate(LocalDate newDate, long id);
     CreditCard transfer(long userId, long recipientId, Money money);
     void applyMonthlyInterestRate(long id);
-    void delete(CreditCard creditCardAccount);
+    void delete(long id);
 }

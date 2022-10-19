@@ -1,6 +1,5 @@
 package com.midterm.MyBank.service.accounts;
 
-import com.midterm.MyBank.controller.CreditCardController;
 import com.midterm.MyBank.controller.dto.CreditCardDTO;
 import com.midterm.MyBank.model.Users.AccountHolder;
 import com.midterm.MyBank.model.Utils.Money;
@@ -19,7 +18,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Period;
 
 @Service
 public class CreditCardServiceImpl implements CreditCardService {
@@ -98,9 +96,9 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     @Override
-    public void delete(CreditCard savingsAccount) {
+    public void delete(long id) {
         try {
-            creditCardRepository.delete(savingsAccount);
+            creditCardRepository.deleteById(id);
         }
         catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error deleting savings account");

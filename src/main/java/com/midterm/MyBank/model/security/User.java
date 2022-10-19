@@ -1,6 +1,5 @@
 package com.midterm.MyBank.model.security;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.midterm.MyBank.model.accounts.Account;
 
 import javax.persistence.*;

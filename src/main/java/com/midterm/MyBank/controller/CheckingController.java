@@ -73,7 +73,11 @@ public class CheckingController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/accounts/checking/{id}")
-    public void delete (@PathVariable long id, @RequestBody Checking checkingAccount){
-        checkingService.delete(checkingAccount);
+    public void delete (@PathVariable long id){
+        if (checkingRepository.findById(id).isPresent()){
+            checkingService.delete(id);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect account id");
+        }
     }
 }
