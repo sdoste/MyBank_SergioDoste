@@ -50,7 +50,7 @@ public class CreditCard extends Account {
             setCreditLimit(creditLimit);
         }
         if (interestRate == null){
-            this.creditLimit = new Money(defaultCreditLimit);
+            this.interestRate = defaultInterestRate;
         } else{
             setInterestRate(interestRate);
         }
