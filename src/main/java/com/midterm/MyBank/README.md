@@ -8,7 +8,7 @@ User case Diagram
 
 Class diagram
 
-![](Class Diagram.png)
+![](../../../../../../Class%20Diagram.png)
 
 There are 4 types of accounts, Checking, studentChecking Credit Card, Savings. They inherit the class Account
 There are 3 types of users: Admin, AccountHolder, and ThirdParty. They inherit the class User
