@@ -77,4 +77,12 @@ public class Checking extends Account {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
+
+    public Money getMinimumBalance() {
+        return minimumBalance;
+    }
+
+    public void setMinimumBalance(Money minimumBalance) {
+        this.minimumBalance = minimumBalance;
+    }
 }

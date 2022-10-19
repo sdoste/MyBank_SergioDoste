@@ -13,18 +13,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CreditCardTest {
 
+
     @Test
     void TestSetCreditLimit() {
         Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120");
         LocalDate date1992 = LocalDate.of(1992, 1, 8);
         AccountHolder userFran = new AccountHolder("fran", encryptPassword("fran123"), "Francisco Tilleo", date1992, address);
-        BigDecimal interestRate = new BigDecimal("1111");
+        BigDecimal interestRate = new BigDecimal("0.1");
 
-        //If credit limit is null
+        //If credit limit is null, set to default 100
         CreditCard userFranAccount = new CreditCard(new Money(new BigDecimal("1111")), userFran,null, interestRate);
         assertEquals(new BigDecimal("100.00"), userFranAccount.getCreditLimit().getAmount());
 
-        //If creditLimit higher than 100 000, should be set toi 100 000
+        //If creditLimit higher than 100 000, should be set to 100 000
         CreditCard userFranAccount3 = new CreditCard(new Money(new BigDecimal("1111")), userFran,new BigDecimal("10005000"), interestRate);
         assertEquals(new BigDecimal("100000.00"), userFranAccount3.getCreditLimit().getAmount());
     }
@@ -34,7 +35,7 @@ class CreditCardTest {
         Address address = new Address("Spain", "Barcelona", "Calle Mallorca", "120");
         LocalDate date1992 = LocalDate.of(1992, 1, 8);
         AccountHolder userFran = new AccountHolder("fran", encryptPassword("fran123"), "Francisco Tilleo", date1992, address);
-        BigDecimal creditLimit = new BigDecimal("0.5");
+        BigDecimal creditLimit = new BigDecimal("5000");
 
 
         //if null interestRate
@@ -44,11 +45,6 @@ class CreditCardTest {
         //if interestRate lower than 0.1, should be set to 0.1
         CreditCard userFranAccount2 = new CreditCard(new Money(new BigDecimal("1111")), userFran,creditLimit, new BigDecimal("0.002"));
         assertEquals(new BigDecimal("0.1000"), userFranAccount2.getInterestRate());
-
-    }
-
-    @Test
-    void getBalanceAndApplyPenaltyFee() {
     }
 
 

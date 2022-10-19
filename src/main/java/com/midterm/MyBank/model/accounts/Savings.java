@@ -72,7 +72,7 @@ public class Savings extends Account{
     }
 
     public void setInterestRate(BigDecimal interestRate) {
-        BigDecimal maxRate = new BigDecimal("0.5");
+        BigDecimal maxRate = new BigDecimal("0.5000");
     //if interestRate bigger or equal to 0.5, set it to 0.5
         if (interestRate.compareTo(maxRate) >= 0){
         this.interestRate = maxRate;

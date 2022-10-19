@@ -1,4 +1,4 @@
-IMPORTANT: in AccountActions (Service->Utils) there is a method that has @PostConstruct commented out. If reinstated, it populates the database with several users an creates some accounts. The annotation "@PostConstruct" should be commented out or deleted after executing the app ONCE, otherwise it the app is executed with it twice it will create repeated users and accounts. Just to be clear, it should be executed only once.
+IMPORTANT: in AccountActions (Service->Utils) there is a method that has @PostConstruct commented out. If reinstated, it populates the database with several users an creates some accounts. The annotation "@PostConstruct" should be commented out or deleted after executing the app ONCE, otherwise it the app is executed with it twice it will create repeated users and accounts. Just to be clear, it should be executed only once. 
 
 Please execute from spring-boot:run
 
