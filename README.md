@@ -1,6 +1,6 @@
 User case Diagram
 
-![](\src\main\java\com\midterm\MyBank\User Case Diagram.png)
+![](User Case Diagram.png)
 
 Class diagram
 
